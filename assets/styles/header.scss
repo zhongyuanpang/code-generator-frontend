@@ -1,0 +1,76 @@
+// 去除nuxt-link下滑线
+a {
+  text-decoration: none;
+}
+
+// 选中导航样式
+.active {
+  border-bottom: 3px solid $default-color;
+  text-shadow: 5px 5px 5px $default-color;
+}
+
+.nuxt-link-active {
+  text-decoration: none;
+}
+
+header {
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transition: 0.6s;
+  padding: 6px 100px;
+  z-index: 55 !important;
+  background: #fff;
+  box-shadow: $default-box-shadow;
+
+  .menu_bar {
+    display: flex;
+    flex: 1;
+
+    .logo {
+      position: relative;
+      font-weight: 700;
+      font-size: 1.7em;
+      font-family: 'Times New Roman', Times, serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $default-color;
+
+      & > img {
+        width: 50px;
+        display: flex;
+        margin-right: 7px;
+      }
+    }
+
+    .menu {
+      margin-left: 20px;
+      overflow: hidden;
+      padding-top: 10px;
+
+      & a {
+        margin: 0px 17px;
+        padding: 7px 0px;
+        font-size: 16px;
+        font-weight: 400;
+        color: black;
+
+        &:hover {
+          border-bottom: 3px solid $default-color;
+        }
+      }
+    }
+  }
+
+  .connect{
+    .avatar_bg{
+      background: $default-background;
+    }
+  }
+
+}
