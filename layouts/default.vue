@@ -99,7 +99,7 @@ html,body {
   margin-top: $nav-height;
   min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
   //background-color: #f2f2f2;
-  padding: 0 100px;
+  //padding: 0 100px;
   .nuxt {
     position: relative;
     width: 100%;

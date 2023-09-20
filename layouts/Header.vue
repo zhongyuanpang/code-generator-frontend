@@ -11,11 +11,7 @@
             <!-- 跳转菜单 -->
             <div class="menu">
                 <NuxtLink to="/" :class="{ active : isActive == 0 }" v-on:click.native="selActive(0)">首页</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">模板</NuxtLink>
             </div>
         </div>
 
@@ -23,50 +19,56 @@
         <div class="connect">
             <!-- 操作按钮 -->
             <div class="connect-btn">
-                <el-button type="primary" @click="openConnect" v-if="!connecter.connectInfo.dataName">连接</el-button>
-                <el-avatar v-else class="avatar_bg">{{connecter.connectInfo.dataName}}</el-avatar>
+                <t-button @click="openConnect" v-if="!connection.connectInfo.dataName">连接</t-button>
+                <t-avatar v-else size="medium" style="cursor: pointer" @click="openConnect">{{connection.connectInfo.dataName}}</t-avatar>
             </div>
         </div>
 
         <!-- 连接弹窗 -->
         <client-only>
-            <el-dialog
-                v-model="connectVisible"
-                title="配置连接"
-                width="30%"
-                draggable
-            >
-                <el-form :model="connectForm" size="small">
-                    <el-form-item label="IP地址" :label-width="formLabelWidth">
-                        <el-input v-model="connectForm.url" autocomplete="off" />
-                    </el-form-item>
-                    <el-form-item label="端口号" :label-width="formLabelWidth">
-                        <el-input v-model="connectForm.port" autocomplete="off" />
-                    </el-form-item>
-                    <el-form-item label="数据库类型" :label-width="formLabelWidth">
-                        <el-radio-group v-model="connectForm.dataType">
-                          <el-radio v-for="(item,index) in typeList" :key="index" :label="item">{{item}}</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="数据库名称" :label-width="formLabelWidth">
-                        <el-input v-model="connectForm.dataName" autocomplete="off" />
-                    </el-form-item>
-                    <el-form-item label="用户名" :label-width="formLabelWidth">
-                        <el-input v-model="connectForm.username" autocomplete="off" />
-                    </el-form-item>
-                    <el-form-item label="密码" :label-width="formLabelWidth">
-                        <el-input v-model="connectForm.password" autocomplete="off" show-password type="password"/>
-                    </el-form-item>
-                </el-form>
-                <template #footer>
-                    <span class="dialog-footer">
-                        <el-button @click="connectVisible = false">取消</el-button>
-                        <el-button type="primary" @click="connect">
-                          连接
-                        </el-button>
-                    </span>
-                </template>
-            </el-dialog>
+          <t-dialog
+              draggable
+              destroyOnClose
+              header="配置连接"
+              width="30%"
+              v-model:visible="connectVisible">
+            <t-form ref="form" :data="connectForm" :colon="true" size="small">
+              <t-form-item label="IP地址" name="url" :label-width="formLabelWidth">
+                <t-input v-model="connectForm.url" ></t-input>
+              </t-form-item>
+              <t-form-item label="端口号" name="port" :label-width="formLabelWidth">
+                <t-input v-model="connectForm.port" ></t-input>
+              </t-form-item>
+              <t-form-item label="数据库类型" name="dataType" :label-width="formLabelWidth">
+                <t-radio-group v-model="connectForm.dataType">
+                  <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
+                </t-radio-group>
+              </t-form-item>
+              <t-form-item label="数据库名称" name="dataName" :label-width="formLabelWidth">
+                <t-input v-model="connectForm.dataName" ></t-input>
+              </t-form-item>
+              <t-form-item label="用户名" name="username" :label-width="formLabelWidth">
+                <t-input v-model="connectForm.username" >
+                  <template #prefix-icon>
+                    <UserIcon />
+                  </template>
+                </t-input>
+              </t-form-item>
+              <t-form-item label="密码" name="password" :label-width="formLabelWidth">
+                <t-input type="password" v-model="connectForm.password">
+                  <template #prefix-icon>
+                    <lock-on-icon />
+                  </template>
+                </t-input>
+              </t-form-item>
+            </t-form>
+
+            <template #footer>
+              <t-button theme="danger" @click="connectVisible = false">取消</t-button>
+              <t-button @click="connect">连接</t-button>
+            </template>
+
+          </t-dialog>
         </client-only>
     </header>
 </template>
@@ -76,7 +78,7 @@ import {reactive, ref} from 'vue'
 import {ElMessage} from 'element-plus'
 import {Http} from "@/utils/request";
 import {connectStore} from "~/store/connecter"
-const connecter = connectStore();
+const connection = connectStore();
 
   // 选中状态
   const isActive = ref(0);
@@ -110,7 +112,7 @@ const connecter = connectStore();
   // 打开连接面板
   const openConnect = () => {
     connectVisible.value = true
-    connectForm = connecter.getConnectInfo()
+    connectForm = connection.getConnectInfo()
   }
 
   // 数据库连接
@@ -127,7 +129,7 @@ const connecter = connectStore();
               message: '连接成功.',
               type: 'success',
             })
-            connecter.setConnectInfo(connectForm);
+            connection.setConnectInfo(connectForm);
             return
         }
         ElMessage({

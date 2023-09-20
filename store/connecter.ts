@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 
-export const connectStore = defineStore('connecter', {
+export const connectStore = defineStore('connection', {
     state: () => ({
         connectInfo: {
             key: "",

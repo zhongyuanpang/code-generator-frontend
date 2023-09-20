@@ -1,13 +1,14 @@
-<template>
-    <div>
-    </div>
-</template>
-
 <script lang="ts" setup>
-import TableColumnSelect from "@/components/TableColumnSelect.vue"
 
 </script>
 
-<style lang="scss" scoped>
+<template>
+    <div class="page">
+    </div>
+</template>
 
+<style lang="scss" scoped>
+.page{
+  padding: 0 100px;
+}
 </style>
