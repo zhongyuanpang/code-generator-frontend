@@ -50,18 +50,45 @@ header {
 
     .menu {
       margin-left: 20px;
-      overflow: hidden;
+      //overflow: hidden;
       padding-top: 10px;
 
       & a {
-        margin: 0px 17px;
-        padding: 7px 0px;
+        margin: 0 5px;
+        padding: 7px 10px;
         font-size: 16px;
         font-weight: 400;
         color: black;
+        position: relative;
+        transition: 0.2s all linear;
 
-        &:hover {
+        //&:hover {
+        //  transition: .1s all;
+        //  border-bottom: 3px solid $default-color;
+        //}
+
+        &::before{
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 100%;
+          width: 0;
+          height: 100%;
           border-bottom: 3px solid $default-color;
+          transition: 0.2s all linear;
+        }
+
+        &:hover::before{
+          width: 100%;
+          bottom: 0;
+          left: 0;
+          transition-delay: 0.1s;
+          border-bottom: 3px solid $default-color;
+          z-index: -1;
+        }
+
+        &:hover ~ &::before{
+          left: 0;
         }
       }
     }

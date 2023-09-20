@@ -12,6 +12,10 @@
             <div class="menu">
                 <NuxtLink to="/" :class="{ active : isActive == 0 }" v-on:click.native="selActive(0)">首页</NuxtLink>
                 <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">DDL</NuxtLink>
             </div>
         </div>
 
@@ -72,7 +76,6 @@ import {reactive, ref} from 'vue'
 import {ElMessage} from 'element-plus'
 import {Http} from "@/utils/request";
 import {connectStore} from "~/store/connecter"
-
 const connecter = connectStore();
 
   // 选中状态
