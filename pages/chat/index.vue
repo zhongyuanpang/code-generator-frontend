@@ -5,7 +5,7 @@ import {ref} from 'vue'
 
 <template>
     <div class="page">
-
+       <h1>聊天</h1>
     </div>
 </template>
 

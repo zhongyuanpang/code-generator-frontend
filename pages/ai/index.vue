@@ -5,7 +5,7 @@ import {ref} from 'vue'
 
 <template>
     <div class="page">
-
+        <h1>AI</h1>
     </div>
 </template>
 

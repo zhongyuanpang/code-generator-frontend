@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive,ref } from 'vue'
 import { VxeGridProps } from 'vxe-table'
 interface RowVO {
   id: number
@@ -20,40 +20,96 @@ const gridOptions = reactive<VxeGridProps<RowVO>>({
   },
   columns: [
     { type: 'seq', width: 50 },
-    { field: 'name', title: 'name' },
-    { field: 'sex', title: 'sex' },
-    { field: 'address', title: 'Address' }
+    {
+      field: 'name',
+      title: '字段',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '注释',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '类型',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '长度',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '默认值',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '可为空',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
+    {
+      field: 'name',
+      title: '索引类型',
+      sortable: true,
+      filters: [{data: {vals: [], sVal: ''}}],
+      filterRender: {name: 'FilterContent'},
+    },
   ],
   toolbarConfig: {
     slots: {
       buttons: 'toolbar_buttons'
     }
   },
-  data: [
-    { id: 10001, name: 'Test1', nickname: 'T1', role: 'Develop', sex: 'Man', age: 28, address: 'Shenzhen' },
-    { id: 10002, name: 'Test2', nickname: 'T2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
-    { id: 10003, name: 'Test3', nickname: 'T3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
-    { id: 10004, name: 'Test4', nickname: 'T4', role: 'Designer', sex: 'Women', age: 23, address: 'Shenzhen' },
-    { id: 10005, name: 'Test5', nickname: 'T5', role: 'Develop', sex: 'Women', age: 30, address: 'Shanghai' },
-    { id: 10006, name: 'Test6', nickname: 'T6', role: 'Designer', sex: 'Women', age: 21, address: 'Shenzhen' },
-    { id: 10007, name: 'Test7', nickname: 'T7', role: 'Test', sex: 'Man', age: 29, address: 'Shenzhen' },
-    { id: 10008, name: 'Test8', nickname: 'T8', role: 'Develop', sex: 'Man', age: 35, address: 'Shenzhen' }
-  ]
+  data: []
 })
+
+const selectValue = ref("")
 </script>
 
 <template>
-    <div>
-      <vxe-grid v-bind="gridOptions">
-        <template #toolbar_buttons>
-          <vxe-button @click="gridOptions.align = 'left'">居左</vxe-button>
-          <vxe-button @click="gridOptions.align = 'center'">居中</vxe-button>
-          <vxe-button @click="gridOptions.align = 'right'">居右</vxe-button>
-        </template>
-      </vxe-grid>
+    <div class="table-column-select">
+        <div class="menu">
+            <t-row>
+                <t-col :span="4">
+                    <t-button block variant="outline">当前数据源：</t-button>
+                </t-col>
+                <t-col :span="8" style="text-align: right">
+                  <t-space>
+                    <t-button theme="primary" variant="base" style="display: block">获取列属性</t-button>
+                    <t-input v-model="selectValue" auto-width clearable placeholder="请输入" style="width: 300px;"/>
+                    <t-button>确认选择</t-button>
+                  </t-space>
+                </t-col>
+            </t-row>
+        </div>
+        <t-divider align="left">表选择</t-divider>
+        <vxe-grid v-bind="gridOptions"/>
     </div>
 </template>
 
 <style scoped lang="scss">
+.table-column-select{
+  position: relative;
+  //box-shadow: $default-box-shadow;
+  //border-radius: 10px;
 
+  .menu{
+      padding: 20px 0;
+  }
+}
 </style>
