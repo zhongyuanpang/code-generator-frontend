@@ -1,7 +1,16 @@
+$base-color:#0052D9;
+//$base-color:#00a6f4;
+
 //通用颜色
-$default-color: #00a6f4;
+$default-color: $base-color;
 //通用背景色
-$default-background: #00a6f4;
+$default-background: $base-color;
 //通用卡片阴影色
 //$default-box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
 $default-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
+
+
+>>> .klsdj-btn .t-button{
+  background: $default-background !important;
+}

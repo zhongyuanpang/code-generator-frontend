@@ -88,7 +88,7 @@ html,body {
   margin: 0;
   padding: 0;
   height: $full-height;
-  background: #FFF;
+  background: #FFF !important;
 }
 
 .z-topBar {

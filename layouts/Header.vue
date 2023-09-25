@@ -66,7 +66,7 @@
             </t-form>
 
             <template #footer>
-              <t-button theme="danger" @click="connectVisible = false">取消</t-button>
+              <t-button class="klsdj-btn" theme="danger" @click="connectVisible = false">取消</t-button>
               <t-button @click="connect">连接</t-button>
             </template>
 
@@ -76,22 +76,24 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
+import {reactive, ref,onMounted } from 'vue'
 import {ElMessage} from 'element-plus'
 import {Http} from "@/utils/request";
 import {connectStore} from "~/store/connecter"
+import {headerStore} from "~/store/header"
 const connection = connectStore();
+const headerState = headerStore();
 
   // 选中状态
-  const isActive = ref(0);
+  const isActive = ref<number>(0);
   // 连接弹窗
-  const connectVisible = ref(false);
+  const connectVisible = ref<boolean>(false);
 
   // 统一label宽度
   const formLabelWidth = '80px'
 
   // 连接表单
-  let connectForm = reactive({
+  let connectForm = reactive<object>({
     key:"",
     url:"",
     port:"",
@@ -102,13 +104,14 @@ const connection = connectStore();
   })
 
   // 数据库类型列表
-  const typeList = reactive([
+  const typeList = reactive<object>([
       "MySQL","SQL Server","Postgre SQL"
   ])
 
   // 切换标签样式
-  function selActive(index: any){
+  function selActive(index: number){
     isActive.value = index
+    headerState.setActive(index)
   }
 
   // 打开连接面板
@@ -140,6 +143,12 @@ const connection = connectStore();
         })
       })
   }
+
+  // 页面打开
+  onMounted(() => {
+    console.log("headerState.getActive()",headerState.getActive())
+    isActive.value = headerState.getActive();
+  })
 </script>
 
 <style lang="scss" scoped>

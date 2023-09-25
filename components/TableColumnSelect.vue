@@ -85,10 +85,15 @@ const selectValue = ref("")
     <div class="table-column-select">
         <div class="menu">
             <t-row>
-                <t-col :span="4">
-                    <t-button block variant="outline">当前数据源：</t-button>
+                <t-col :span="2">
+                    <t-button block>选择数据源</t-button>
                 </t-col>
-                <t-col :span="8" style="text-align: right">
+                <t-col :span="3">
+                    <div class="show_data_info">
+                        当前数据表：
+                    </div>
+                </t-col>
+                <t-col :span="7" style="text-align: right">
                   <t-space>
                     <t-button theme="primary" variant="base" style="display: block">获取列属性</t-button>
                     <t-input v-model="selectValue" auto-width clearable placeholder="请输入" style="width: 300px;"/>
@@ -109,7 +114,20 @@ const selectValue = ref("")
   //border-radius: 10px;
 
   .menu{
-      padding: 20px 0;
+      margin-top: 60px;
+      padding: 15px;
+      border-radius: 7px;
+      box-shadow: $default-box-shadow;
+
+      .show_data_info{
+        border: 1px dashed $default-color;
+        color: $default-color;
+        line-height: 30px;
+        padding: 0 20px;
+        margin: 0 20px;
+        font-weight: bold;
+        font-size: 1.1em;
+      }
   }
 }
 </style>
