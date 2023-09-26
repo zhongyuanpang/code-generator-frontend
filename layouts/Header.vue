@@ -12,8 +12,9 @@
             <div class="menu">
                 <NuxtLink to="/" :class="{ active : isActive == 0 }" v-on:click.native="selActive(0)">首页</NuxtLink>
                 <NuxtLink :to="{name:'template'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">模板</NuxtLink>
-                <NuxtLink :to="{name:'ai'}" :class="{ active : isActive == 2 }" v-on:click.native="selActive(2)">AI</NuxtLink>
-                <NuxtLink :to="{name:'chat'}" :class="{ active : isActive == 3 }" v-on:click.native="selActive(3)">聊天</NuxtLink>
+                <NuxtLink :to="{name:'ai'}" :class="{ active : isActive == 2 }" v-on:click.native="selActive(2)">GPT</NuxtLink>
+                <NuxtLink :to="{name:'tool'}" :class="{ active : isActive == 3 }" v-on:click.native="selActive(3)">AI工具</NuxtLink>
+                <NuxtLink :to="{name:'chat'}" :class="{ active : isActive == 4 }" v-on:click.native="selActive(4)">聊天</NuxtLink>
             </div>
         </div>
 

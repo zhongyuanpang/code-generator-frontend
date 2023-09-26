@@ -15,6 +15,6 @@ export const headerStore = defineStore('active',{
     },
 
     persist: process.client && {
-        storage: localStorage,
+        storage: sessionStorage,
     }
 })
