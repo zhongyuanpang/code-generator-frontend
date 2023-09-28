@@ -3,7 +3,7 @@ export const menuList = [
     {
         id:1,
         name:"AI创作平台",
-        icon:"",
+        icon:"edit-2",
         children:[
             {
                 name:"写作工具",
@@ -37,8 +37,35 @@ export const menuList = [
     },
     {
         id:2,
+        name:"AI互动平台",
+        icon:"chart-3d",
+        children:[
+            {
+                name:"聊天机器人",
+                icon:""
+            },
+            {
+                name:"知识问答",
+                icon:""
+            },
+            {
+                name:"搜索引擎",
+                icon:""
+            },
+            {
+                name:"搜图",
+                icon:""
+            },
+            {
+                name:"搜书",
+                icon:""
+            },
+        ]
+    },
+    {
+        id:3,
         name:"AI影视平台",
-        icon:"",
+        icon:"play-circle",
         children:[
             {
                 name:"视频生成-文生视频",
@@ -71,9 +98,40 @@ export const menuList = [
         ]
     },
     {
-        id:3,
+        id:4,
+        name:"AI绘画平台",
+        icon:"image",
+        children:[
+            {
+                name:"绘图生成-文生图",
+                icon:""
+            },
+            {
+                name:"绘画模型",
+                icon:""
+            },
+            {
+                name:"绘画提示",
+                icon:""
+            },
+            {
+                name:"绘画社区",
+                icon:""
+            },
+            {
+                name:"3D生成",
+                icon:""
+            },
+            {
+                name:"图形工作站",
+                icon:""
+            },
+        ]
+    },
+    {
+        id:5,
         name:"AI视觉平台",
-        icon:"",
+        icon:"browse",
         children:[
             {
                 name:"视觉设计",
@@ -114,75 +172,9 @@ export const menuList = [
         ]
     },
     {
-        id:4,
-        name:"AI绘画平台",
-        icon:"",
-        children:[
-            {
-                name:"绘图生成-文生图",
-                icon:""
-            },
-            {
-                name:"绘画模型",
-                icon:""
-            },
-            {
-                name:"绘画提示",
-                icon:""
-            },
-            {
-                name:"绘画社区",
-                icon:""
-            },
-            {
-                name:"3D生成",
-                icon:""
-            },
-            {
-                name:"图形工作站",
-                icon:""
-            },
-        ]
-    },
-    {
-        id:5,
-        name:"AI视觉平台",
-        icon:"",
-        children:[
-            {
-                name:"写作工具",
-                icon:""
-            },
-            {
-                name:"自然语言处理模型",
-                icon:""
-            },
-            {
-                name:"写作提示",
-                icon:""
-            },
-            {
-                name:"内容检测",
-                icon:""
-            },
-            {
-                name:"论文查重",
-                icon:""
-            },
-            {
-                name:"文献阅读",
-                icon:""
-            },
-            {
-                name:"网络文学",
-                icon:""
-            },
-        ]
-    },
-    {
-        id:6,
+        id:7,
         name:"AI语音平台",
-        icon:"",
+        icon:"sound-high",
         children:[
             {
                 name:"文字转语音",
@@ -211,9 +203,9 @@ export const menuList = [
         ]
     },
     {
-        id:7,
+        id:8,
         name:"AI企业平台",
-        icon:"",
+        icon:"usergroup",
         children:[
             {
                 name:"人力资源",
@@ -242,9 +234,9 @@ export const menuList = [
         ]
     },
     {
-        id:8,
+        id:9,
         name:"AI办公平台",
-        icon:"",
+        icon:"system-code",
         children:[
             {
                 name:"翻译",
@@ -277,9 +269,9 @@ export const menuList = [
         ]
     },
     {
-        id:9,
+        id:10,
         name:"AI运营平台",
-        icon:"",
+        icon:"chart-line",
         children:[
             {
                 name:"营销工具",
@@ -316,9 +308,9 @@ export const menuList = [
         ]
     },
     {
-        id:10,
+        id:11,
         name:"AI学习平台",
-        icon:"",
+        icon:"book",
         children:[
             {
                 name:"教育助理",
@@ -331,9 +323,9 @@ export const menuList = [
         ]
     },
     {
-        id:11,
+        id:12,
         name:"AI资讯",
-        icon:"",
+        icon:"internet",
         children:[
             {
                 name:"每日新闻",

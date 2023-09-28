@@ -12,6 +12,9 @@ const headerState = headerStore();
 const collapsed = ref(false);
 const iconUrl = ref('https://tdesign.gtimg.com/site/baseLogo-light.png');
 
+// 默认选中
+const defaultActive = ref<string>("AI创作平台")
+
 const changeCollapsed = () => {
   collapsed.value = !collapsed.value;
   iconUrl.value = collapsed.value
@@ -19,8 +22,9 @@ const changeCollapsed = () => {
       : 'https://tdesign.gtimg.com/site/baseLogo-light.png';
 };
 
+// 选中事件
 const changeHandler = (active: string) => {
-  console.log('change', active);
+  defaultActive.value = active
 };
 
 // 回到主页
@@ -35,14 +39,19 @@ const goHome = () => {
   <t-layout>
     <!--region  < 左侧导航栏 > -->
     <t-aside style="border-top: 1px solid var(--component-border)">
-      <t-menu theme="system" default-value="item2" :collapsed="collapsed" height="550px" @change="changeHandler">
+      <t-menu theme="dark"
+              :default-value="defaultActive"
+              :collapsed="collapsed"
+              expand-mutex
+              height="550px"
+              @change="changeHandler">
         <template #logo>
           <img :width="collapsed ? 35 : 136" :src="iconUrl" style="margin-left: 25px" alt="logo"/>
         </template>
         <t-menu-group title="">
-          <t-submenu v-for="(item,index) in menuList" :key="index" :title="item.name" value="2-1">
+          <t-submenu v-for="(item,index) in menuList" :key="index" :value="item.name" :title="item.name" value="2-1">
             <template #icon>
-              <t-icon name="server"/>
+              <t-icon :name="item.icon"/>
             </template>
             <template v-if="item.children">
               <t-menu-item v-for="(citem,cindex) in item.children" :key="cindex" :value="citem.name">{{citem.name}}</t-menu-item>
@@ -64,7 +73,7 @@ const goHome = () => {
     <t-layout style="height: 100vh">
       <!--region  < 头部 >  -->
       <t-header>
-        <t-head-menu value="item" height="120px">
+        <t-head-menu theme="dark" value="item" height="120px">
 <!--          <template #logo>-->
 <!--            <img width="136" style="margin-left: 20px" class="logo"-->
 <!--                 src="https://www.tencent.com/img/index/menu_logo_hover.png" alt="logo"/>-->
@@ -80,7 +89,7 @@ const goHome = () => {
       <!--endregion -->
 
       <!--region  < 内容 >  -->
-      <t-content>
+      <t-content theme="dark">
         <div></div>
       </t-content>
       <!--endregion  -->
