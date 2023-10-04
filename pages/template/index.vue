@@ -33,7 +33,7 @@ const handleOpen = ()=>{
         <!--endregion -->
 
         <!-- 侧边栏 -->
-        <div class="sticky-tool" @click="handleOpen">
+        <div class="sticky-tool" @click="handleOpen" v-if="!drawerVisible">
 <!--          <CaretRightSmallIcon /> -->
           选择模板
         </div>
@@ -47,16 +47,18 @@ const handleOpen = ()=>{
 
     .sticky-tool{
         position: fixed;
-        right: 5px;
-        top: 150px;
+        bottom: 55px;
+        left: 50%;
+        transform: translateX(-50%);
         line-height: 40px;
-        padding: 0 20px;
+        padding: 0 40px;
         background: $default-background;
         color: white;
         display: flex;
+        justify-content: center;
         align-items: center;
         cursor: pointer;
-        border-radius: 7px;
+        border-radius: 20px;
         user-select: none;
         box-shadow: $default-box-shadow;
     }
