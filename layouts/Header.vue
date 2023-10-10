@@ -5,8 +5,8 @@
         <div class="menu_bar">
             <!-- logo -->
             <a href="/" class="logo">
-                <img src="https://pic3.58cdn.com.cn/nowater/webim/big/n_v2b60501fb846d4a1abcb3e85c4716770d.png" alt="">
-                Code
+                <img src="~/assets/images/logo.png" alt="">
+                TEMPLATE CODE
             </a>
             <!-- 跳转菜单 -->
             <div class="menu">
@@ -22,8 +22,8 @@
         <div class="connect">
             <!-- 操作按钮 -->
             <div class="connect-btn">
-                <t-button @click="openConnect" v-if="!connection.connectInfo.dataName">连接</t-button>
-                <t-avatar v-else size="medium" style="cursor: pointer" @click="openConnect">{{connection.connectInfo.dataName}}</t-avatar>
+                <t-button @click="openConnect" v-if="!connection.connectInfo.dataBase">连接</t-button>
+                <t-avatar v-else size="medium" style="cursor: pointer" @click="openConnect">{{connection.connectInfo.dataBase}}</t-avatar>
             </div>
         </div>
 
@@ -47,8 +47,8 @@
                   <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
                 </t-radio-group>
               </t-form-item>
-              <t-form-item label="数据库名称" name="dataName" :label-width="formLabelWidth">
-                <t-input v-model="connectForm.dataName" ></t-input>
+              <t-form-item label="数据库名称" name="dataBase" :label-width="formLabelWidth">
+                <t-input v-model="connectForm.dataBase" ></t-input>
               </t-form-item>
               <t-form-item label="用户名" name="username" :label-width="formLabelWidth">
                 <t-input v-model="connectForm.username" >
@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import {reactive, ref,onMounted } from 'vue'
-import {ElMessage} from 'element-plus'
+import {MessagePlugin} from 'tdesign-vue-next';
 import {Http} from "@/utils/request";
 import {connectStore} from "~/store/connecter"
 import {headerStore} from "~/store/header"
@@ -98,7 +98,7 @@ const headerState = headerStore();
     key:"",
     url:"",
     port:"",
-    dataName:"",
+    dataBase:"",
     username:"",
     password:"",
     dataType:"",
@@ -131,17 +131,11 @@ const headerState = headerStore();
       }).then((res: any)=>{
         const {code,data} = res
         if (code === 200){
-            ElMessage({
-              message: '连接成功.',
-              type: 'success',
-            })
+            MessagePlugin.success('连接成功');
             connection.setConnectInfo(connectForm);
             return
         }
-        ElMessage({
-          message: '连接失败！请核对信息',
-          type: 'error',
-        })
+        MessagePlugin.error('连接失败！请核对信息');
       })
   }
 

@@ -13,8 +13,7 @@ const handleOpen = ()=>{
 <template>
     <div class="page">
         <!--region  < 模板展示 > -->
-      <!--        <TableColumnSelect/>-->
-
+        <TableColumnSelect/>
         <!--endregion  -->
 
         <!--region < 抽屉展示 > -->

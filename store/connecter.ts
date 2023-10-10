@@ -6,7 +6,7 @@ export const connectStore = defineStore('connection', {
             key: "",
             url: "",
             port: "",
-            dataName: "",
+            dataBase: "",
             username: "",
             password: "",
             dataType: "",
