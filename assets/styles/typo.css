@@ -250,6 +250,7 @@ code[class*="language-"], pre[class*="language-"]{
   margin: 1rem 0 0.7em;
   color: #00B5AD;
   font-weight: bold;
+  cursor: pointer;
 }
 
 /* 标题应该更贴紧内容，并与其他块区分，margin 值要相应做优化 */

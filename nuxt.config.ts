@@ -1,3 +1,5 @@
+import {prismjsPlugin} from 'vite-plugin-prismjs'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // devtools: { enabled: true },
@@ -12,6 +14,8 @@ export default defineNuxtConfig({
   },
   css:[
       'element-plus/dist/index.css',
+      "~/assets/lib/prism/themes/BlackMac.css",
+      "~/assets/styles/typo.css",
   ],
   modules: [
     '@pinia/nuxt',
@@ -26,7 +30,15 @@ export default defineNuxtConfig({
       }
     },
     plugins: [
-
+      prismjsPlugin({
+        // ['json', 'css'] 按需引入，'all' 所有语言
+        languages: 'all',
+        // 配置行号插件
+        plugins: ['toolbar', 'show-language', 'copy-to-clipboard','line-numbers'],
+        // 主题名
+        // theme: 'dark',
+        css: true
+      })
     ],
   },
 })

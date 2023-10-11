@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted,reactive, ref,nextTick} from 'vue'
 import {connectStore} from "~/store/connecter";
 import {getAllTable, getTableColumnInfo} from "~/composables/template";
 import {MessagePlugin} from 'tdesign-vue-next';
 import MarkdownIt from 'markdown-it';
+import Prism from 'prismjs'
 
 // 连接信息
 const connection = connectStore();
@@ -224,10 +225,6 @@ const selectTableVisible = ref(false)
 
 const gridRef = ref();
 
-onMounted(()=>{
-
-})
-
 /**
  * 获取所有表
  */
@@ -286,13 +283,13 @@ const selectColumn = () => {
 /**
  * 生成代码
  */
-const generate = () => {
-    const list = gridOptions_select.data
-    if (!list || !list.length) return MessagePlugin.warning('请选择数据');
+const generate = (async()=>{
+  const list = gridOptions_select.data
+  if (!list || !list.length) return MessagePlugin.warning('请选择数据');
 
-    let str = ''
-    list.forEach(item=>{
-      str += `
+  let str = ''
+  list.forEach(item=>{
+    str += `
         {
           field: '${item['COLUMN_NAME']}',
           title: '${item['COLUMN_COMMENT']}',
@@ -302,18 +299,23 @@ const generate = () => {
           filterRender: {name: 'FilterContent'},
         },
         `
-    })
+  })
 
-    const newStr = `
+  const newStr =
+`
+# vxe-column
+
 \`\`\`js
 ${str}
 \`\`\`
-      `
+`
 
   const md = new MarkdownIt();
   result.value = md.render(newStr);
-  console.log(result.value)
-}
+  nextTick(()=>{
+    Prism.highlightAll()
+  })
+})
 
 </script>
 
@@ -339,11 +341,20 @@ ${str}
         </div>
         <t-divider align="left">字段选择</t-divider>
 
-        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>
+<!--        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>-->
 
-        <t-divider align="left">选择列表</t-divider>
+<!--        <t-divider align="left">选择列表</t-divider>-->
 
-        <vxe-grid v-bind="gridOptions_select" round stripe/>
+<!--        <vxe-grid v-bind="gridOptions_select" round stripe/>-->
+
+        <t-row  :gutter="16">
+            <t-col :span="6">
+                <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>
+            </t-col>
+            <t-col :span="6">
+                <vxe-grid v-bind="gridOptions_select" round stripe/>
+            </t-col>
+        </t-row>
 
         <t-divider align="left">功能</t-divider>
 
@@ -351,40 +362,32 @@ ${str}
 
         <t-divider align="left">数据展示</t-divider>
 
-        <div class="generate_content js-toc-content b_content typo typo-selection" v-html="result">
-        </div>
+        <!-- 结果展示 -->
+        <div class="generate_content typo typo-selection" v-html="result"></div>
 
-<!--        <t-row  :gutter="16">-->
-<!--            <t-col :span="6">-->
-<!--                <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>-->
-<!--            </t-col>-->
-<!--            <t-col :span="6">-->
-<!--                <vxe-grid v-bind="gridOptions_select" round stripe/>-->
-<!--            </t-col>-->
-<!--        </t-row>-->
-
-      <!-- 连接弹窗 -->
-      <client-only>
-        <t-dialog
-            destroyOnClose
-            header="选择数据源"
-            width="60%"
-            v-model:visible="selectTableVisible">
-            <vxe-grid v-bind="gridOptions_source"
-                      round
-                      stripe
-                      @radio-change="selectTable"
-                      @cell-dblclick="onTableDbClick"/>
-          <template #footer>
-            <span></span>
-          </template>
-        </t-dialog>
-      </client-only>
+        <!-- 连接弹窗 -->
+        <client-only>
+          <t-dialog
+              destroyOnClose
+              header="选择数据源"
+              width="60%"
+              v-model:visible="selectTableVisible">
+              <vxe-grid v-bind="gridOptions_source"
+                        round
+                        stripe
+                        @radio-change="selectTable"
+                        @cell-dblclick="onTableDbClick"/>
+            <template #footer>
+              <span></span>
+            </template>
+          </t-dialog>
+        </client-only>
 
     </div>
 </template>
 
 <style scoped lang="scss">
+
 .table-column-select{
   position: relative;
   //box-shadow: $default-box-shadow;
@@ -408,14 +411,10 @@ ${str}
   }
 
   .generate_content{
+    padding: 20px;
     min-height: 500px;
     border-radius: 15px;
     box-shadow: $default-box-shadow;
-
-    .editor{
-      position: relative;
-      height: 100%;
-    }
   }
 }
 </style>
