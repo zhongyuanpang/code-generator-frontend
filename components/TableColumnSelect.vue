@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted,reactive, ref,nextTick} from 'vue'
 import {connectStore} from "~/store/connecter";
-import {getAllTable, getTableColumnInfo} from "~/composables/template";
+import {getAllTable, getTableColumnInfo} from "~/composables/api/template";
 import {MessagePlugin} from 'tdesign-vue-next';
 import MarkdownIt from 'markdown-it';
 import Prism from 'prismjs'

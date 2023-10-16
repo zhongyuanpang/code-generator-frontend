@@ -2,7 +2,7 @@ import {Http} from "~/utils/request";
 
 /**
  * 获取当前数据库下的所有表信息
- * @param database
+ * @param dataBase
  */
 export const getAllTable = (dataBase: string) => {
     const obj = {
