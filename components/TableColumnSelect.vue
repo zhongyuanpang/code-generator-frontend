@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import {onMounted,reactive, ref,nextTick} from 'vue'
+import {onMounted,reactive, ref,nextTick,defineEmits} from 'vue'
 import {connectStore} from "~/store/connecter";
-import {getAllTable, getTableColumnInfo} from "~/composables/api/template";
-import {MessagePlugin} from 'tdesign-vue-next';
-import MarkdownIt from 'markdown-it';
-import Prism from 'prismjs'
+import {getTableColumnInfo} from "~/composables/api/template";
+import TableSelect from "~/components/TableSelect.vue";
 
 // 连接信息
 const connection = connectStore();
@@ -171,46 +169,6 @@ const gridOptions_select = reactive({
   data: []
 })
 
-// 资源弹窗配置项
-const gridOptions_source = reactive({
-  border: true,
-  height: 300,
-  align: null,
-  columnConfig: {
-    resizable: true
-  },
-  columns: [
-    {
-      type: 'radio',
-      width: 50,
-      align: 'center',
-      fixed: 'left'
-    },
-    { type: 'seq', width: 50 },
-    {
-      field: 'TABLE_NAME',
-      title: '表名',
-
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'TABLE_COMMENT',
-      title: '注释',
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-  ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
-  data: []
-})
-
 // 生成结果
 const result = ref("")
 
@@ -220,37 +178,14 @@ const searchValue = ref("")
 // 选择的表
 const selectTableName = ref("")
 
-// 选择数据源弹窗展示状态
-const selectTableVisible = ref(false)
-
 const gridRef = ref();
+const tableSelect = ref();
 
 /**
  * 获取所有表
  */
 const getTable = (()=>{
-    selectTableVisible.value = true
-
-    const dataBase = connection.getConnectInfo().dataBase;
-    if (dataBase){
-        getAllTable(dataBase).then((res:any)=>{
-            gridOptions_source.data = res.data
-        })
-    }
-})
-
-/**
- * 单选框选中事件
- */
-const selectTable = (({ newValue } : any) => {
-  getColumnInfo(newValue.TABLE_NAME)
-})
-
-/**
- * 表格双击事件
- */
-const onTableDbClick = (({row} : any)=>{
-    getColumnInfo(row.TABLE_NAME)
+    tableSelect.value.show();
 })
 
 /**
@@ -268,7 +203,6 @@ const getColumnInfo = (value:string) => {
       gridOptions.data = res.data
     }
   })
-  selectTableVisible.value = false
 }
 
 /**
@@ -280,43 +214,10 @@ const selectColumn = () => {
   }
 }
 
-/**
- * 生成代码
- */
-const generate = (async()=>{
-  const list = gridOptions_select.data
-  if (!list || !list.length) return MessagePlugin.warning('请选择数据');
-
-  let str = ''
-  list.forEach(item=>{
-    str += `
-        {
-          field: '${item['COLUMN_NAME']}',
-          title: '${item['COLUMN_COMMENT']}',
-          width:250,
-          sortable: true,
-          filters: [{data: {vals: [], sVal: ''}}],
-          filterRender: {name: 'FilterContent'},
-        },
-        `
-  })
-
-  const newStr =
-`
-# vxe-column
-
-\`\`\`js
-${str}
-\`\`\`
-`
-
-  const md = new MarkdownIt();
-  result.value = md.render(newStr);
-  nextTick(()=>{
-    Prism.highlightAll()
-  })
+// 对外暴露属性 | 方法
+defineExpose({
+  gridOptions_select,
 })
-
 </script>
 
 <template>
@@ -356,32 +257,26 @@ ${str}
             </t-col>
         </t-row>
 
-        <t-divider align="left">功能</t-divider>
-
-        <t-button block @click="generate">生成</t-button>
-
-        <t-divider align="left">数据展示</t-divider>
-
-        <!-- 结果展示 -->
-        <div class="generate_content typo typo-selection" v-html="result"></div>
-
         <!-- 连接弹窗 -->
-        <client-only>
-          <t-dialog
-              destroyOnClose
-              header="选择数据源"
-              width="60%"
-              v-model:visible="selectTableVisible">
-              <vxe-grid v-bind="gridOptions_source"
-                        round
-                        stripe
-                        @radio-change="selectTable"
-                        @cell-dblclick="onTableDbClick"/>
-            <template #footer>
-              <span></span>
-            </template>
-          </t-dialog>
-        </client-only>
+        <TableSelect ref="tableSelect" @getColumnInfo="getColumnInfo"/>
+
+<!--        <client-only>-->
+<!--          <t-dialog-->
+<!--              destroyOnClose-->
+<!--              header="选择数据源"-->
+<!--              width="60%"-->
+<!--              v-model:visible="selectTableVisible">-->
+<!--              <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入" @change="search" style="width: 300px;"/>-->
+<!--              <vxe-grid v-bind="gridOptions_source"-->
+<!--                        round-->
+<!--                        stripe-->
+<!--                        @radio-change="selectTable"-->
+<!--                        @cell-dblclick="onTableDbClick"/>-->
+<!--            <template #footer>-->
+<!--              <span></span>-->
+<!--            </template>-->
+<!--          </t-dialog>-->
+<!--        </client-only>-->
 
     </div>
 </template>
@@ -408,13 +303,6 @@ ${str}
         font-weight: bold;
         font-size: 1.1em;
       }
-  }
-
-  .generate_content{
-    padding: 20px;
-    min-height: 500px;
-    border-radius: 15px;
-    box-shadow: $default-box-shadow;
   }
 }
 </style>

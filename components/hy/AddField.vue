@@ -1,332 +1,386 @@
 <script setup lang="ts">
 import {onMounted,reactive, ref,nextTick} from 'vue'
-import {connectStore} from "~/store/connecter";
-import {getAllTable, getTableColumnInfo} from "~/composables/api/template";
 import {MessagePlugin} from 'tdesign-vue-next';
 import MarkdownIt from 'markdown-it';
-import Prism from 'prismjs'
-
-// 连接信息
-const connection = connectStore();
-
-// 表格信息展示配置
-const gridOptions = reactive({
-  border: true,
-  height: 500,
-  align: null,
-  columnConfig: {
-    resizable: true
-  },
-  columns: [
-    {
-      type: 'checkbox',
-      width: 50,
-      align: 'center',
-      fixed: 'left'
-    },
-    { type: 'seq',width: 50},
-    {
-      field: 'COLUMN_NAME',
-      title: '字段',
-      width:250,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_COMMENT',
-      title: '注释',
-      width:250,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'DATA_TYPE',
-      title: '类型',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'CHARACTER_MAXIMUM_LENGTH',
-      title: '长度',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_DEFAULT',
-      title: '默认值',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'IS_NULLABLE',
-      title: '可为空',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_KEY',
-      title: '索引类型',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-  ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
-  data: []
-})
-
-// 选中信息展示配置
-const gridOptions_select = reactive({
-  border: true,
-  height: 500,
-  align: null,
-  columnConfig: {
-    resizable: true
-  },
-  columns: [
-    {
-      type: 'checkbox',
-      width: 50,
-      align: 'center',
-      fixed: 'left'
-    },
-    { type: 'seq',width: 50},
-    {
-      field: 'COLUMN_NAME',
-      title: '字段',
-      width:250,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_COMMENT',
-      title: '注释',
-      width:250,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'DATA_TYPE',
-      title: '类型',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'CHARACTER_MAXIMUM_LENGTH',
-      title: '长度',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_DEFAULT',
-      title: '默认值',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'IS_NULLABLE',
-      title: '可为空',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'COLUMN_KEY',
-      title: '索引类型',
-      width:160,
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-  ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
-  data: []
-})
-
-// 资源弹窗配置项
-const gridOptions_source = reactive({
-  border: true,
-  height: 300,
-  align: null,
-  columnConfig: {
-    resizable: true
-  },
-  columns: [
-    {
-      type: 'radio',
-      width: 50,
-      align: 'center',
-      fixed: 'left'
-    },
-    { type: 'seq', width: 50 },
-    {
-      field: 'TABLE_NAME',
-      title: '表名',
-
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-    {
-      field: 'TABLE_COMMENT',
-      title: '注释',
-      sortable: true,
-      filters: [{data: {vals: [], sVal: ''}}],
-      filterRender: {name: 'FilterContent'},
-    },
-  ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
-  data: []
-})
+import TableColumnSelect from "~/components/TableColumnSelect.vue";
 
 // 生成结果
 const result = ref("")
 
-// 搜索
-const searchValue = ref("")
+const tableColumnSelect = ref()
 
-// 选择的表
-const selectTableName = ref("")
-
-// 选择数据源弹窗展示状态
-const selectTableVisible = ref(false)
-
-const gridRef = ref();
+// 是否为子表
+const isSub = ref(false)
 
 /**
- * 获取所有表
+ * 处理数据
  */
-const getTable = (()=>{
-  selectTableVisible.value = true
-
-  const dataBase = connection.getConnectInfo().dataBase;
-  if (dataBase){
-    getAllTable(dataBase).then((res:any)=>{
-      gridOptions_source.data = res.data
-    })
-  }
-})
-
-/**
- * 单选框选中事件
- */
-const selectTable = (({ newValue } : any) => {
-  getColumnInfo(newValue.TABLE_NAME)
-})
-
-/**
- * 表格双击事件
- */
-const onTableDbClick = (({row} : any)=>{
-  getColumnInfo(row.TABLE_NAME)
-})
-
-/**
- * 根据表名获取字段信息
- * @param value
- */
-const getColumnInfo = (value:string) => {
-  selectTableName.value = value
-  getTableColumnInfo({
-    dataBase:connection.getConnectInfo().dataBase,
-    tableName:value
-  }).then((res:any)=>{
-    const {code,data} = res
-    if (code === 200 && data && data.length){
-      gridOptions.data = res.data
-    }
-  })
-  selectTableVisible.value = false
-}
-
-/**
- * 获取选中的列
- */
-const selectColumn = () => {
-  if (gridRef.value && typeof gridRef.value.getCheckboxRecords === 'function') {
-    gridOptions_select.data = gridRef.value.getCheckboxRecords()
-  }
-}
-
-/**
- * 生成代码
- */
-const generate = (async()=>{
-  const list = gridOptions_select.data
+const process = (() => {
+  const list = tableColumnSelect.value.gridOptions_select.data;
   if (!list || !list.length) return MessagePlugin.warning('请选择数据');
 
-  let pojo = ''
-  let xml = ''
-  let column = ``
-  let edit = ``
-  let modal = ``
+  let entity = ''
+  let create_key = ','
+  let create_values = ','
+  let update = ','
+  let select = ','
+  let createInserts_key = ','
+  let createInserts_values = ','
 
-  list.forEach(item=>{
-    edit += generate_edit(item)
-    column += generate_column(item)
-    modal += generate_modal(item)
+  let updateBase = ``
+  let mainTable = ``
+  let formItem = ``
+
+  let sub_edit = ``
+  let sub_modal = ``
+  let sub_column = ``
+  let listTable = ``
+
+
+  list.forEach((item: any)=>{
+    entity += generate_entity(item)
+    create_key += generate_create_key(item)
+    create_values += generate_create_values(item)
+    update += generate_update(item)
+    select += generate_select(item)
+    createInserts_key += generate_create_key(item)
+    createInserts_values += generate_createInserts_values(item)
+
+    if (isSub.value){
+      sub_edit += generate_sub_edit(item)
+      sub_column += generate_sub_column(item)
+      sub_modal += generate_sub_modal(item)
+      listTable += generate_mainTable(item)
+    }else {
+      updateBase += generate_updateBase(item)
+      mainTable += generate_mainTable(item)
+      formItem += generate_formItem(item)
+    }
   })
 
-  const newStr =
-      `
-# vxe-column
-
+  // 主表生成代码
+  const mainResult = `
+## updateBase.js（部分项目为 row and setDefaultData）
 \`\`\`js
-${column}
+${updateBase}
 \`\`\`
 
-# edit
+## mainTable.js
+\`\`\`js
+${mainTable}
+\`\`\`
 
+## update.vue
 \`\`\`html
-${edit}
+${formItem}
 \`\`\`
 `
 
+  // 子表生成代码
+  const subResult = `
+## detailTable.vue
+### 标签
+\`\`\`html
+${sub_edit}
+\`\`\`
+
+### modal弹窗
+\`\`\`js
+${sub_modal}
+\`\`\`
+
+## column列
+\`\`\`js
+${sub_column}
+\`\`\`
+
+## listTable.js
+\`\`\`js
+${listTable}
+\`\`\`
+`
+
+  let newStr =
+      `
+# 后端
+## entity
+\`\`\`java
+${entity}
+\`\`\`
+
+## Mapper
+### create-key
+\`\`\`xml
+${create_key}
+\`\`\`
+### create-values
+\`\`\`xml
+${create_values}
+\`\`\`
+### update
+\`\`\`xml
+${update}
+\`\`\`
+### select
+\`\`\`xml
+${select}
+\`\`\`
+### createInserts-key
+\`\`\`xml
+${createInserts_key}
+\`\`\`
+### createInserts-values
+\`\`\`xml
+${createInserts_values}
+\`\`\`
+
+# 前端
+
+`
+
+  if (isSub.value) newStr += subResult;
+  else newStr += mainResult
+
   const md = new MarkdownIt();
-  result.value = md.render(newStr);
-  nextTick(()=>{
-    Prism.highlightAll()
-  })
+
+  return md.render(newStr);
 })
 
-const generate_pojo = ((item:any)=>{
+const generate_entity = ((item:any)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
+  let result = ``
+
+  switch (DATA_TYPE) {
+    case "varchar":
+    case "text":
+    case "longtext":
+      result =
+`
+@ApiModelProperty("${COLUMN_COMMENT}")
+private String ${COLUMN_NAME};
+
+@JsonProperty("${COLUMN_NAME}")
+public String get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+    return this.${COLUMN_NAME};
+}
+
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(String value) {
+    this.${COLUMN_NAME} = value;
+}`;
+      break;
+    case "double":
+      result =
+`
+@ApiModelProperty("${COLUMN_COMMENT}")
+private Double ${COLUMN_NAME};
+
+@JsonProperty("${COLUMN_NAME}")
+public Double get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+    return this.${COLUMN_NAME};
+}
+
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Double value) {
+    this.${COLUMN_NAME} = value;
+}`;
+      break
+    case "int":
+    case "tinyint":
+      result =
+          `
+@ApiModelProperty("${COLUMN_COMMENT}")
+private Integer ${COLUMN_NAME};
+
+@JsonProperty("${COLUMN_NAME}")
+public Integer get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+    return this.${COLUMN_NAME};
+}
+
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Integer value) {
+    this.${COLUMN_NAME} = value;
+}`;
+      break;
+    case "bit":
+      result =
+          `
+@ApiModelProperty("${COLUMN_COMMENT}")
+private Boolean ${COLUMN_NAME};
+
+@JsonProperty("${COLUMN_NAME}")
+public Boolean get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+    return this.${COLUMN_NAME};
+}
+
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Boolean value) {
+    this.${COLUMN_NAME} = value;
+}`;
+      break;
+    case "datetime":
+    case "date":
+      result =
+          `
+@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+@ApiModelProperty("${COLUMN_COMMENT}")
+private LocalDateTime ${COLUMN_NAME};
+
+@JsonProperty("${COLUMN_NAME}")
+public LocalDateTime get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+    return this.${COLUMN_NAME};
+}
+
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(LocalDateTime value) {
+    this.${COLUMN_NAME} = value;
+}`;
+      break
+  }
+
+  return result
 })
 
-const generate_edit = ((item:any)=>{
-  const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
+const generate_create_key = ((item:any)=>{
+  const {COLUMN_NAME} = item
+  return `
+${COLUMN_NAME},`
+})
+
+const generate_create_values = ((item:any)=>{
+  const {COLUMN_NAME} = item
+  return `
+#{${COLUMN_NAME}},`
+})
+
+const generate_update = ((item:any)=>{
+  const {COLUMN_NAME} = item
+  return `
+${COLUMN_NAME}=#{${COLUMN_NAME}},`
+})
+
+const generate_select = ((item:any)=>{
+  const {COLUMN_NAME} = item
+  return `
+${COLUMN_NAME} AS ${COLUMN_NAME},`
+})
+
+const generate_createInserts_values = ((item:any)=>{
+  const {COLUMN_NAME} = item
+  return `
+#{value.${COLUMN_NAME}},`
+})
+
+const generate_updateBase = ((item:any)=>{
+  const {COLUMN_NAME,DATA_TYPE} = item
+  let result = ``
+
+  switch (DATA_TYPE) {
+    case "varchar":
+    case "text":
+      result = `
+${COLUMN_NAME} : ''`;
+      break;
+    case "double":
+    case "int":
+    case "tinyint":
+      result = `
+${COLUMN_NAME} : 0`;
+      break;
+    case "datetime":
+    case "date":
+      result = `
+${COLUMN_NAME} : null`;
+      break
+  }
+
+  return result
+})
+
+const generate_mainTable = ((item:any)=> {
+  const {COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE} = item
+  let result = ``
+
+  switch (DATA_TYPE){
+    case "datetime":
+    case "date":
+      result = `
+{
+    title: '${COLUMN_COMMENT}',
+    width: 150,
+    field: '${COLUMN_NAME}',
+    sortable: true,
+    filters: [{data: {vals: [], sVal: ''}}],
+    filterRender: {name: 'FilterContent'},
+    slots: {
+        default: ({row}) => {
+            return XEUtils.toDateString(row.${COLUMN_NAME}, 'yyyy-MM-dd')
+        }
+    }
+},`
+      break
+    default:
+      result = `
+{
+    title: '${COLUMN_COMMENT}',
+    width: 150,
+    field: '${COLUMN_NAME}',
+    sortable: true,
+    filters: [{data: {vals: [], sVal: ''}}],
+    filterRender: {name: 'FilterContent'},
+},`
+      break
+  }
+
+  return result
+})
+
+const generate_formItem = ((item:any)=> {
+  const {COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE} = item
+  let result = ``
+
+  switch (DATA_TYPE){
+    case "datetime":
+    case "date":
+      result = `
+<Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
+  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+    <DatePicker type="date" :value="row.${COLUMN_NAME}"
+                format="yyyy-MM-dd" transfer on-clear
+                @on-change="row.${COLUMN_NAME} = $event" v-width="'100%' "
+                :disabled="flagObj.${COLUMN_NAME}==2"
+                element-id="${COLUMN_NAME}"></DatePicker>
+  </FormItem>
+</Col>`
+      break
+    case "varchar":
+    case "text":
+    case "longtext":
+      result = `
+<Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
+  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+    <Input v-model="row.${COLUMN_NAME}" type="text"
+           @on-focus="inputFocus($event)"
+           :disabled="flagObj.${COLUMN_NAME}==2"
+           element-id="${COLUMN_NAME}"></Input>
+  </FormItem>
+</Col>`
+      break
+    case "int":
+    case "double":
+    case "tinyint":
+      result = `
+<Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
+  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+    <Input v-model="row.${COLUMN_NAME}" type="number"
+           @on-focus="inputFocus($event)"
+           :disabled="flagObj.${COLUMN_NAME}==2"
+           element-id="${COLUMN_NAME}"></Input>
+  </FormItem>
+</Col>`
+      break
+  }
+
+  return result
+})
+
+const generate_sub_edit = ((item:any)=>{
+  const {COLUMN_NAME,DATA_TYPE} = item
   let result = ``
 
   switch (DATA_TYPE) {
@@ -370,7 +424,7 @@ const generate_edit = ((item:any)=>{
   return result
 })
 
-const generate_column = ((item:any)=>{
+const generate_sub_column = ((item:any)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
   let result = ``
 
@@ -428,7 +482,7 @@ const generate_column = ((item:any)=>{
   return result
 })
 
-const generate_modal = ((item:any)=>{
+const generate_sub_modal = ((item:any)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
   let result = ``
 
@@ -476,105 +530,20 @@ const generate_modal = ((item:any)=>{
   return result
 })
 
-
+defineExpose({
+  process,
+});
 </script>
 
 <template>
-  <div class="table-column-select">
-    <div class="menu">
-      <t-row>
-        <t-col :span="2">
-          <t-button block @click="getTable">选择数据源</t-button>
-        </t-col>
-        <t-col :span="3">
-          <div class="show_data_info">
-            当前数据表：{{selectTableName}}
-          </div>
-        </t-col>
-        <t-col :span="7" style="text-align: right">
-          <t-space>
-            <t-input v-model="searchValue" auto-width clearable placeholder="请输入" style="width: 300px;"/>
-            <t-button @click="selectColumn">确认选择</t-button>
-          </t-space>
-        </t-col>
-      </t-row>
+    <div>
+        <TableColumnSelect ref="tableColumnSelect"/>
+        <div style="text-align: center">
+          <t-checkbox @change="isSub = !isSub">是否为子表</t-checkbox>
+        </div>
     </div>
-    <t-divider align="left">字段选择</t-divider>
-
-    <!--        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>-->
-
-    <!--        <t-divider align="left">选择列表</t-divider>-->
-
-    <!--        <vxe-grid v-bind="gridOptions_select" round stripe/>-->
-
-    <t-row  :gutter="16">
-      <t-col :span="6">
-        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>
-      </t-col>
-      <t-col :span="6">
-        <vxe-grid v-bind="gridOptions_select" round stripe/>
-      </t-col>
-    </t-row>
-
-    <t-divider align="left">功能</t-divider>
-
-    <t-button block @click="generate">生成</t-button>
-
-    <t-divider align="left">数据展示</t-divider>
-
-    <!-- 结果展示 -->
-    <div class="generate_content typo typo-selection" v-html="result"></div>
-
-    <!-- 连接弹窗 -->
-    <client-only>
-      <t-dialog
-          destroyOnClose
-          header="选择数据源"
-          width="60%"
-          v-model:visible="selectTableVisible">
-        <vxe-grid v-bind="gridOptions_source"
-                  round
-                  stripe
-                  @radio-change="selectTable"
-                  @cell-dblclick="onTableDbClick"/>
-        <template #footer>
-          <span></span>
-        </template>
-      </t-dialog>
-    </client-only>
-
-  </div>
 </template>
 
 <style scoped lang="scss">
 
-.table-column-select{
-  position: relative;
-  //box-shadow: $default-box-shadow;
-  //border-radius: 10px;
-
-  .menu{
-    margin-top: 50px;
-    padding: 15px;
-    border-radius: 7px;
-    box-shadow: $default-box-shadow;
-
-    .show_data_info{
-      border: 1px dashed $default-color;
-      color: $default-color;
-      line-height: 30px;
-      padding: 0 20px;
-      margin: 0 20px;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-  }
-
-  .generate_content{
-    padding: 20px;
-    min-height: 500px;
-    border-radius: 15px;
-    box-shadow: $default-box-shadow;
-  }
-}
 </style>

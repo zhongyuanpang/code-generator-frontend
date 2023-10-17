@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   css:[
       'element-plus/dist/index.css',
       "~/assets/lib/prism/themes/BlackMac.css",
+      "~/assets/lib/prism/prism.css",
       "~/assets/styles/typo.css",
   ],
   modules: [
