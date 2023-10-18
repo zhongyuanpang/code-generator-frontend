@@ -12,6 +12,7 @@ const drawerVisible = ref<boolean>(false)
 // 生成的结果
 const result = ref("")
 
+const resultVisible = ref(false)
 
 // 标签选择事件
 const onChange = ((obj: any)=>{
@@ -78,10 +79,13 @@ const generate = (()=>{
         result.value = addField.value.process()
         break
     }
-
     nextTick(()=>{
         Prism.highlightAll()
     })
+
+    setTimeout(()=>{
+      resultVisible.value = true
+    },100)
 })
 </script>
 
@@ -93,13 +97,11 @@ const generate = (()=>{
         <!--endregion  -->
 
         <!--region 结果展示 -->
-          <t-divider align="left"  v-if="result">结果展示</t-divider>
+<!--          <t-divider align="left"  v-if="result">结果展示</t-divider>-->
           <t-row :gutter="16">
             <t-col :span="3">
               <t-affix ref="affix" :offset-top="100" :offset-bottom="-140">
-                <client-only>
-                <Result v-if="result"/>
-                </client-only>
+                <Result v-if="resultVisible"/>
               </t-affix>
             </t-col>
             <t-col :span="9">
