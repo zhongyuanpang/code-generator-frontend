@@ -63,7 +63,6 @@ const connect = () => {
 
 // 页面打开
 onMounted(() => {
-  console.log("headerState.getActive()",headerState.getActive())
   isActive.value = headerState.getActive();
 })
 </script>

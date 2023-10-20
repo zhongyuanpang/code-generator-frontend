@@ -3,9 +3,19 @@ import {onMounted,reactive, ref,nextTick,defineEmits} from 'vue'
 import {connectStore} from "~/store/connecter";
 import {getTableColumnInfo} from "~/composables/api/template";
 import TableSelect from "~/components/TableSelect.vue";
+import {tableColumnSelectStore} from '~/store/tableColumnSelect'
+const emit = defineEmits(['refresh'])
 
 // 连接信息
 const connection = connectStore();
+// 列缓存
+const TABLE_COLUMN_SELECT_STORE = tableColumnSelectStore();
+
+onMounted(()=>{
+  gridOptions.data = TABLE_COLUMN_SELECT_STORE.GET_GRID_OPTIONS_DATA()
+  gridOptions_select.data = TABLE_COLUMN_SELECT_STORE.GET_GRID_OPTIONS_SELECT_DATA()
+  selectTableName.value = TABLE_COLUMN_SELECT_STORE.GET_SELECT_TABLE_NAME()
+})
 
 // 表格信息展示配置
 const gridOptions = reactive({
@@ -80,11 +90,6 @@ const gridOptions = reactive({
       filterRender: {name: 'FilterContent'},
     },
   ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
   data: []
 })
 
@@ -161,11 +166,6 @@ const gridOptions_select = reactive({
       filterRender: {name: 'FilterContent'},
     },
   ],
-  toolbarConfig: {
-    slots: {
-      buttons: 'toolbar_buttons'
-    }
-  },
   data: []
 })
 
@@ -194,6 +194,10 @@ const getTable = (()=>{
  */
 const getColumnInfo = (value:string) => {
   selectTableName.value = value
+  TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME(value);
+  gridOptions.data = []
+  gridOptions_select.data = []
+
   getTableColumnInfo({
     dataBase:connection.getConnectInfo().dataBase,
     tableName:value
@@ -201,6 +205,7 @@ const getColumnInfo = (value:string) => {
     const {code,data} = res
     if (code === 200 && data && data.length){
       gridOptions.data = res.data
+      TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA(res.data)
     }
   })
 }
@@ -210,13 +215,25 @@ const getColumnInfo = (value:string) => {
  */
 const selectColumn = () => {
   if (gridRef.value && typeof gridRef.value.getCheckboxRecords === 'function') {
-    gridOptions_select.data = gridRef.value.getCheckboxRecords()
+    const records = gridRef.value.getCheckboxRecords()
+    gridOptions_select.data = records
+    TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_SELECT_DATA(records)
   }
 }
 
+// 重置
+const refresh = (()=>{
+  selectTableName.value = ""
+  gridOptions.data = []
+  gridOptions_select.data = []
+  TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME("");
+  TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA([])
+  TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_SELECT_DATA([])
+})
+
 // 对外暴露属性 | 方法
 defineExpose({
-  gridOptions_select,
+  gridOptions_select,refresh
 })
 </script>
 

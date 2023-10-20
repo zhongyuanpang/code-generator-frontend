@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import {reactive, ref} from 'vue'
+import TableSelect from "~/components/TableSelect.vue";
 
 // 选择生成数据库类型
 const dataBaseOptions = reactive<any>([
   'MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MongoDB'
 ])
+
+const FORM_RULES = { tableName: [{ required: true, message: '表名必填' }] };
+
+// 新增字段表单
+const addFieldFormData = reactive({
+  tableName: '',
+});
 
 // 生成的结果
 const result = ref("")
@@ -32,6 +40,14 @@ const generate = (() => {
 const pushField = (() => {
 
 })
+
+
+const tableSelect = ref();
+
+// 获取所有表
+const getTable = (()=>{
+  tableSelect.value.show();
+})
 </script>
 
 <template>
@@ -50,13 +66,21 @@ const pushField = (() => {
                       <t-icon name="add" class="tabs-icon-margin"/>
                       新增字段
                     </template>
+                    <t-divider />
+                    <t-button block @click="getTable">选择数据源</t-button>
+                    <t-divider />
+                    <t-form ref="form" :rules="FORM_RULES" label-align="left" :data="addFieldFormData" :colon="true">
+                      <t-form-item label="表名" name="tableName">
+                        <t-input v-model="addFieldFormData.tableName" disabled></t-input>
+                      </t-form-item>
+                    </t-form>
                     <!--region  《 手风琴 》  -->
 <!--                    <t-space direction="vertical">-->
-                      <t-collapse v-model="currentItem" expand-mutex @change="handlePanelChange">
-                        <t-collapse-panel value="0" header="这是一个折叠标题">
-                          这部分是每个折叠面板折叠或展开的内容，可根据不同业务或用户的使用诉求，进行自定义填充。可以是纯文本、图文、子列表等内容形式。
-                        </t-collapse-panel>
-                      </t-collapse>
+<!--                      <t-collapse v-model="currentItem" expand-mutex @change="handlePanelChange">-->
+<!--                        <t-collapse-panel value="0" header="这是一个折叠标题">-->
+<!--                          这部分是每个折叠面板折叠或展开的内容，可根据不同业务或用户的使用诉求，进行自定义填充。可以是纯文本、图文、子列表等内容形式。-->
+<!--                        </t-collapse-panel>-->
+<!--                      </t-collapse>-->
 <!--                    </t-space>-->
                     <!--endregion -->
                     <t-divider />
@@ -126,6 +150,10 @@ const pushField = (() => {
       </t-row>
     </div>
     <!--endregion -->
+
+
+    <!--组件 -->
+    <TableSelect ref="tableSelect"/>
   </div>
 </template>
 

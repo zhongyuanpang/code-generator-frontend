@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted,reactive, ref,nextTick} from 'vue'
+import {onMounted,reactive, ref,nextTick,defineEmits} from 'vue'
 import {MessagePlugin} from 'tdesign-vue-next';
 import MarkdownIt from 'markdown-it';
 import TableColumnSelect from "~/components/TableColumnSelect.vue";
@@ -11,6 +11,11 @@ const tableColumnSelect = ref()
 
 // 是否为子表
 const isSub = ref(false)
+
+// 重置数据
+const refresh = (()=>{
+  tableColumnSelect.value.refresh()
+})
 
 /**
  * 处理数据
@@ -532,6 +537,7 @@ const generate_sub_modal = ((item:any)=>{
 
 defineExpose({
   process,
+  refresh
 });
 </script>
 
