@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {reactive, ref} from 'vue'
 import TableSelect from "~/components/TableSelect.vue";
+import {getTableColumnInfo} from "~/composables/api/template";
 
 // 选择生成数据库类型
 const dataBaseOptions = reactive<any>([
@@ -9,9 +10,12 @@ const dataBaseOptions = reactive<any>([
 
 const FORM_RULES = { tableName: [{ required: true, message: '表名必填' }] };
 
+// 选中的表
+const selectTableName = ref("")
+
 // 新增字段表单
 const addFieldFormData = reactive({
-  tableName: '',
+  tableName: selectTableName,
 });
 
 // 生成的结果
@@ -19,7 +23,6 @@ const result = ref("")
 
 // tabs默认选择
 const value = ref('add');
-
 
 const currentItem = ref([]);
 const handlePanelChange = (val: any) => {
@@ -48,6 +51,30 @@ const tableSelect = ref();
 const getTable = (()=>{
   tableSelect.value.show();
 })
+
+/**
+ * 根据表名获取字段信息
+ * @param value
+ */
+const getColumnInfo = (value:string) => {
+  console.log(value)
+  selectTableName.value = value
+  // selectTableName.value = value
+  // TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME(value);
+  // gridOptions.data = []
+  // gridOptions_select.data = []
+  //
+  // getTableColumnInfo({
+  //   dataBase:connection.getConnectInfo().dataBase,
+  //   tableName:value
+  // }).then((res:any)=>{
+  //   const {code,data} = res
+  //   if (code === 200 && data && data.length){
+  //     gridOptions.data = res.data
+  //     TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA(res.data)
+  //   }
+  // })
+}
 </script>
 
 <template>
@@ -153,7 +180,7 @@ const getTable = (()=>{
 
 
     <!--组件 -->
-    <TableSelect ref="tableSelect"/>
+    <TableSelect ref="tableSelect" @getColumnInfo="getColumnInfo"/>
   </div>
 </template>
 

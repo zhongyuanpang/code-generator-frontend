@@ -225,14 +225,14 @@ public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(B
           `
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 @ApiModelProperty("${COLUMN_COMMENT}")
-private LocalDateTime ${COLUMN_NAME};
+private Timestamp ${COLUMN_NAME};
 
 @JsonProperty("${COLUMN_NAME}")
-public LocalDateTime get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+public Timestamp get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
     return this.${COLUMN_NAME};
 }
 
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(LocalDateTime value) {
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Timestamp value) {
     this.${COLUMN_NAME} = value;
 }`;
       break
@@ -279,18 +279,18 @@ const generate_updateBase = ((item:any)=>{
     case "varchar":
     case "text":
       result = `
-${COLUMN_NAME} : ''`;
+${COLUMN_NAME} : '',`;
       break;
     case "double":
     case "int":
     case "tinyint":
       result = `
-${COLUMN_NAME} : 0`;
+${COLUMN_NAME} : 0,`;
       break;
     case "datetime":
     case "date":
       result = `
-${COLUMN_NAME} : null`;
+${COLUMN_NAME} : null,`;
       break
   }
 
