@@ -544,9 +544,11 @@ defineExpose({
 <template>
     <div>
         <TableColumnSelect ref="tableColumnSelect"/>
+        <t-divider align="center"><h3>功能选择</h3></t-divider>
         <div style="text-align: center">
-          <t-checkbox @change="isSub = !isSub">是否为子表</t-checkbox>
+          <t-checkbox @change="isSub = !isSub"><strong>是否为子表</strong></t-checkbox>
         </div>
+        <t-divider/>
     </div>
 </template>
 

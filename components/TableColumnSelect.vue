@@ -257,7 +257,7 @@ defineExpose({
                 </t-col>
             </t-row>
         </div>
-        <t-divider align="left">字段选择</t-divider>
+        <t-divider align="left"><strong>字段选择</strong></t-divider>
 
 <!--        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>-->
 

@@ -145,9 +145,10 @@ const refresh = (()=>{
 
         <!--region 结果展示 -->
 <!--          <t-divider align="left"  v-if="result">结果展示</t-divider>-->
+        <div style="margin-top: 50px">
           <t-row :gutter="16">
             <t-col :span="3">
-              <t-affix ref="affix" :offset-top="100" :offset-bottom="-140">
+              <t-affix ref="affix" :offset-top="100" :offset-bottom="-250">
                 <Result v-if="resultVisible"/>
               </t-affix>
             </t-col>
@@ -155,6 +156,7 @@ const refresh = (()=>{
               <div class="generate_content typo typo-selection" v-html="result" v-if="result"></div>
             </t-col>
           </t-row>
+        </div>
         <!--endregion -->
 
         <!--region < 抽屉展示 > -->
@@ -205,7 +207,6 @@ const refresh = (()=>{
 
     .generate_content{
         padding: 20px 30px;
-        min-height: 500px;
         border-radius: 15px;
         box-shadow: $default-box-shadow;
     }
