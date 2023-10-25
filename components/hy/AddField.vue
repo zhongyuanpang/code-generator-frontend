@@ -94,7 +94,7 @@ ${sub_edit}
 ${sub_modal}
 \`\`\`
 
-## column列
+### column列
 \`\`\`js
 ${sub_column}
 \`\`\`
@@ -379,6 +379,16 @@ const generate_formItem = ((item:any)=> {
   </FormItem>
 </Col>`
       break
+    case "bit":
+      result = `
+<Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
+  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+    <Checkbox class="checkrow" v-model="row.${COLUMN_NAME}" border
+                              :disabled="flagObj.${COLUMN_NAME}==2"
+                              element-id="${COLUMN_NAME}"></Checkbox>
+  </FormItem>
+</Col>`
+      break
   }
 
   return result
@@ -423,6 +433,21 @@ const generate_sub_edit = ((item:any)=>{
                       flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
              @focus="inputFocus($event)"></vxe-input>
 </template>`;
+      break
+    case "bit":
+        result = `
+<template #${COLUMN_NAME}_default="{ row }">
+  <vxe-checkbox v-model="row.${COLUMN_NAME}"
+                :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                     flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+                @focus="inputFocus($event)"></vxe-checkbox>
+</template>
+<template #${COLUMN_NAME}_edit="{ row }">
+  <vxe-checkbox v-model="row.${COLUMN_NAME}"
+                :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                    flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+                @focus="inputFocus($event)"></vxe-checkbox>
+</template>`
       break
   }
 
@@ -482,6 +507,19 @@ const generate_sub_column = ((item:any)=>{
     slots: {edit: '${COLUMN_NAME}_edit'},
 },`
       break
+    case "bit":
+      result = `
+{
+    title: "${COLUMN_COMMENT}",
+    width: 150,
+    field: '${COLUMN_NAME}',
+    sortable: true,
+    filters: [{data: {vals: [], sVal: ''}}],
+    filterRender: {name: 'FilterContent'},
+    editRender: {autofocus: '.vxe-input--inner', defaultValue: false},
+    slots: {default: '${COLUMN_NAME}_default', edit: '${COLUMN_NAME}_edit'},
+},`
+      break
   }
 
   return result
@@ -527,6 +565,16 @@ const generate_sub_modal = ((item:any)=>{
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" type="date"
                readonly></vxe-input>
+  </template>
+</vxe-form-item>`
+      break
+    case "bit":
+      result = `
+<vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
+               :item-render="{}"
+               v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
+  <template #default="{ data }">
+    <vxe-checkbox :value="data.${COLUMN_NAME}" onclick="return false"></vxe-checkbox>
   </template>
 </vxe-form-item>`
       break
