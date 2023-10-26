@@ -116,27 +116,27 @@ ${entity}
 ## Mapper
 ### create-key
 \`\`\`xml
-${create_key}
+${create_key.slice(0,-1)}
 \`\`\`
 ### create-values
 \`\`\`xml
-${create_values}
+${create_values.slice(0,-1)}
 \`\`\`
 ### update
 \`\`\`xml
-${update}
+${update.slice(0,-1)}
 \`\`\`
 ### select
 \`\`\`xml
-${select}
+${select.slice(0,-1)}
 \`\`\`
 ### createInserts-key
 \`\`\`xml
-${createInserts_key}
+${createInserts_key.slice(0,-1)}
 \`\`\`
 ### createInserts-values
 \`\`\`xml
-${createInserts_values}
+${createInserts_values.slice(0,-1)}
 \`\`\`
 
 # 前端
