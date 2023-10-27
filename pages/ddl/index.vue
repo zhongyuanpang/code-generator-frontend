@@ -8,7 +8,10 @@ const dataBaseOptions = reactive<any>([
   'MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MongoDB'
 ])
 
-const FORM_RULES = { tableName: [{ required: true, message: '表名必填' }] };
+const FORM_RULES = {
+  tableName: [{ required: true, message: '表名必填' }] ,
+  DATA_TYPE: [{ required: true, message: '表名必填' }] ,
+};
 
 // 选中的表
 const selectTableName = ref("")
@@ -16,6 +19,7 @@ const selectTableName = ref("")
 // 新增字段表单
 const addFieldFormData = reactive({
   tableName: selectTableName,
+  fieldList:[]
 });
 
 // 生成的结果
@@ -41,7 +45,15 @@ const generate = (() => {
 
 // 添加字段
 const pushField = (() => {
-
+  addFieldFormData.fieldList.push({
+    COLUMN_NAME:"",
+    COLUMN_COMMENT:"",
+    DATA_TYPE:"",
+    CHARACTER_MAXIMUM_LENGTH:"",
+    IS_NULLABLE:"",
+    COLUMN_DEFAULT:"",
+    COLUMN_KEY:"",
+  })
 })
 
 
@@ -96,11 +108,40 @@ const getColumnInfo = (value:string) => {
                     <t-divider />
                     <t-button block @click="getTable">选择数据源</t-button>
                     <t-divider />
-                    <t-form ref="form" :rules="FORM_RULES" label-align="left" :data="addFieldFormData" :colon="true">
+                    <!-- region 新增表单 -->
+
+                    <t-form ref="form" :rules="FORM_RULES" label-align="left"  :data="addFieldFormData" :colon="true">
                       <t-form-item label="表名" name="tableName">
                         <t-input v-model="addFieldFormData.tableName" disabled></t-input>
                       </t-form-item>
+                      <div style="max-height: 35vh;overflow: scroll;">
+                      <t-collapse @change="handlePanelChange" v-if="addFieldFormData.fieldList.length">
+                        <t-collapse-panel v-for="(item,index) in addFieldFormData.fieldList" :value="index" :key="index">
+                          <template #header>
+                            <t-space size="small">
+                              <t-input v-model="addFieldFormData.fieldList[index].COLUMN_NAME" placeholder="字段名"></t-input>
+                            </t-space>
+                          </template>
+                          <t-space>
+                            <t-form-item label="字段类型" name="DATA_TYPE">
+                              <t-input v-model="addFieldFormData.fieldList[index].DATA_TYPE"></t-input>
+                            </t-form-item>
+                            <t-form-item label="默认值" name="COLUMN_DEFAULT">
+                              <t-input v-model="addFieldFormData.fieldList[index].COLUMN_DEFAULT"></t-input>
+                            </t-form-item>
+                          </t-space>
+                          <div style="height: 10px;"></div>
+                          <t-space>
+                            <t-form-item label="注释" name="COLUMN_COMMENT">
+                              <t-input v-model="addFieldFormData.fieldList[index].COLUMN_COMMENT"></t-input>
+                            </t-form-item>
+                          </t-space>
+                        </t-collapse-panel>
+                      </t-collapse>
+                      </div>
                     </t-form>
+
+                    <!--endregion -->
                     <!--region  《 手风琴 》  -->
 <!--                    <t-space direction="vertical">-->
 <!--                      <t-collapse v-model="currentItem" expand-mutex @change="handlePanelChange">-->
