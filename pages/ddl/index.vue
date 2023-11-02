@@ -150,6 +150,7 @@ const removeField = (index: number) => {
         <t-col :span="6">
           <div class="generate_box">
             <t-card title="快速生成SQL语句" hover-shadow :style="{ height: '85vh' }">
+              <t-button block @click="getTable">选择数据源</t-button>
               <div class="content">
                 <t-tabs :value="value" @change="handlerChange">
                   <t-tab-panel value="add">
@@ -157,9 +158,6 @@ const removeField = (index: number) => {
                       <t-icon name="add" class="tabs-icon-margin"/>
                       新增字段
                     </template>
-                    <t-divider />
-                    <t-button block @click="getTable">选择数据源</t-button>
-                    <t-divider />
                     <!-- region 新增表单 -->
 
                     <t-form ref="form" :rules="FORM_RULES" label-align="left"  :data="addFieldFormData" :colon="true">
