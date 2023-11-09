@@ -5,7 +5,7 @@
         </div>
         <div class="z-main">
             <transition name="fade-transform" mode="out-in">
-                <slot class="nuxt" />
+                <slot class="nuxt"/>
             </transition>
         </div>
         <div class="z-bottom">
@@ -36,6 +36,7 @@ html,body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
 }
 
 *,
@@ -88,7 +89,6 @@ html,body {
   margin: 0;
   padding: 0;
   height: $full-height;
-  background: #FFF !important;
 }
 
 .z-topBar {
@@ -98,17 +98,7 @@ html,body {
 .z-main {
   margin-top: $nav-height;
   min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
-  //background-color: #f2f2f2;
-  //padding: 0 100px;
-  .nuxt {
-    position: relative;
-    width: 100%;
-    height:100%;
-    min-height: 100vh;
-    background: #FFF;
-    margin: 0;
-    padding: 0;
-  }
+  background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
 }
 
 .z-bottom{

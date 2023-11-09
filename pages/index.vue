@@ -4,12 +4,16 @@
 
 <template>
     <div class="page">
-        <h1>首页</h1>
+
     </div>
 </template>
 
 <style lang="scss" scoped>
 .page{
-  padding: 0 100px;
+  height: 100vh;
+  background-image: url("https://pic1.58cdn.com.cn/nowater/webim/big/n_v25e4330ca575a4ba0acbbc276e4ead72e.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 </style>

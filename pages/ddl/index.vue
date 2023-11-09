@@ -31,14 +31,17 @@ const result = ref("")
 
 // tabs默认选择
 const value = ref('add');
-//endregion
 
+// 字段类型
+const DATA_TYPE_OPTIONS = ["bigint","bit","char","date","datetime","decimal"
+  ,"double","int","text","longtext","tinyint","varchar"]
+
+//endregion
 
 //region  《 组件 ref 》
 
 const tableSelect = ref();
 //endregion
-
 
 //region  《 事件 》
 
@@ -67,17 +70,15 @@ const generateAdd = () => {
   let str = ``
 //  ALTER TABLE proddmv ADD jzrqcreationdate datetime COMMENT '制作日期';
   fieldList.forEach(item=>{
-    console.log(item)
     const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_DEFAULT,IS_NULLABLE,COLUMN_KEY} = item
     str += `
-ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE} COMMENT '${COLUMN_COMMENT}';
-`
+ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE} COMMENT '${COLUMN_COMMENT}';`
   })
 
 
   const mdResult = `
 \`\`\`sql
-${str.slice(0,-1)}
+${str}
 \`\`\`
 `
   const md = new MarkdownIt();
@@ -153,7 +154,7 @@ const removeField = (index: number) => {
               <t-button block @click="getTable">选择数据源</t-button>
               <div class="content">
                 <t-tabs :value="value" @change="handlerChange">
-                  <t-tab-panel value="add">
+                  <t-tab-panel value="add" style="padding: 15px 0">
                     <template #label>
                       <t-icon name="add" class="tabs-icon-margin"/>
                       新增字段
@@ -164,7 +165,7 @@ const removeField = (index: number) => {
                       <t-form-item label="表名" name="tableName">
                         <t-input v-model="addFieldFormData.tableName" disabled></t-input>
                       </t-form-item>
-                      <div style="max-height: 35vh;overflow: scroll;">
+                      <div style="height: 40vh;overflow: auto">
                       <t-collapse @change="handlePanelChange" v-if="addFieldFormData.fieldList.length" :expand-on-row-click="false">
                         <t-collapse-panel v-for="(item,index) in addFieldFormData.fieldList" :value="index" :key="index">
                           <template #header>
@@ -179,7 +180,9 @@ const removeField = (index: number) => {
                           </template>
                           <t-space>
                             <t-form-item label="字段类型" name="DATA_TYPE">
-                              <t-input v-model="addFieldFormData.fieldList[index].DATA_TYPE"/>
+                              <t-select v-model="addFieldFormData.fieldList[index].DATA_TYPE" placeholder="请选择字段类型" clearable>
+                                <t-option v-for="item in DATA_TYPE_OPTIONS" :key="item" :value="item" :label="item"></t-option>
+                              </t-select>
                             </t-form-item>
                             <t-form-item label="默认值" name="COLUMN_DEFAULT">
                               <t-input v-model="addFieldFormData.fieldList[index].COLUMN_DEFAULT"/>
@@ -268,29 +271,10 @@ const removeField = (index: number) => {
     </div>
     <!--endregion -->
 
-
     <!--组件 -->
     <TableSelect ref="tableSelect" @getColumnInfo="getColumnInfo"/>
   </div>
 </template>
-
-<style>
-/* 全局样式，适用于所有滚动条 */
-body::-webkit-scrollbar {
-  width: 0.5em;
-  background-color: transparent;
-}
-
-body::-webkit-scrollbar-thumb {
-  background-color: #888;
-  display: none;
-}
-
-body::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-  display: none;
-}
-</style>
 
 <style lang="scss" scoped>
 .tabs-icon-margin {

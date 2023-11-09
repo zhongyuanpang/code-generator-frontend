@@ -19,7 +19,8 @@ header {
   transition: 0.6s;
   padding: 6px 100px;
   z-index: 55 !important;
-  background: #fff;
+  //background: #fff;
+  background: linear-gradient(45deg,#eff3fe,50%,#fbf4f7,100%,#edf2ff);
   box-shadow: $default-box-shadow;
 
   .menu_bar {

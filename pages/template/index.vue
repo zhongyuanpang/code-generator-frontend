@@ -144,7 +144,7 @@ const refresh = (()=>{
         <!--endregion  -->
 
         <!--region 结果展示 -->
-<!--          <t-divider align="left"  v-if="result">结果展示</t-divider>-->
+        <t-divider align="left"  v-if="result">结果展示</t-divider>
         <div style="margin-top: 50px">
           <t-row :gutter="16">
             <t-col :span="3">
