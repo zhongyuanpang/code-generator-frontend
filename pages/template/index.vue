@@ -170,9 +170,7 @@ const refresh = (()=>{
                   header="模板选择">
 
           <div v-for="(item,index) in templateList" :key="index">
-              <t-divider>
-                <t-avatar image="~/assets/images/template/hy.jpg" v-if="item.url" /> {{item.name}}
-              </t-divider>
+              <div class="divider">{{item.name}}</div>
               <t-collapse expand-icon-placement="right">
                 <t-collapse-panel v-for="(itm,idx) in item.collapseList" :key="idx" :value="itm.name" :header="itm.name">
                   <t-space align="center" v-if="itm.tagList.length">
@@ -183,6 +181,7 @@ const refresh = (()=>{
                 </t-collapse-panel>
               </t-collapse>
           </div>
+
         </t-drawer>
         </client-only>
         <!--endregion -->
@@ -203,7 +202,6 @@ const refresh = (()=>{
 .page{
     padding: 0 100px;
     position: relative;
-
 
     .generate_content{
         padding: 20px 30px;
@@ -261,5 +259,25 @@ const refresh = (()=>{
           transform: skew(45deg) translate3d(300px,0,0);
         }
     }
+}
+
+
+::v-deep .divider{
+  color: $base-color !important;
+  font-size: larger;
+  font-weight: bolder;
+  margin: 20px 0;
+  position: relative;
+  padding-left: 15px;
+
+  &::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: $base-color;
+  }
 }
 </style>

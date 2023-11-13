@@ -10,7 +10,7 @@
 
 <style lang="scss" scoped>
 .page{
-  height: 100vh;
+  height: calc(100vh - 56px);
   background-image: url("https://pic1.58cdn.com.cn/nowater/webim/big/n_v25e4330ca575a4ba0acbbc276e4ead72e.png");
   background-position: center center;
   background-size: cover;

@@ -165,7 +165,7 @@ const removeField = (index: number) => {
                       <t-form-item label="表名" name="tableName">
                         <t-input v-model="addFieldFormData.tableName" disabled></t-input>
                       </t-form-item>
-                      <div style="height: 40vh;overflow: auto">
+                      <div style="height: 40vh;overflow: auto;">
                       <t-collapse @change="handlePanelChange" v-if="addFieldFormData.fieldList.length" :expand-on-row-click="false">
                         <t-collapse-panel v-for="(item,index) in addFieldFormData.fieldList" :value="index" :key="index">
                           <template #header>
@@ -194,6 +194,15 @@ const removeField = (index: number) => {
                               <t-input v-model="addFieldFormData.fieldList[index].COLUMN_COMMENT"/>
                             </t-form-item>
                             <t-form-item label="非空" name="IS_NULLABLE">
+                              <t-checkbox v-model="addFieldFormData.fieldList[index].IS_NULLABLE"/>
+                            </t-form-item>
+                          </t-space>
+                          <div style="height: 10px;"></div>
+                          <t-space>
+                            <t-form-item label="长度" name="CHARACTER_MAXIMUM_LENGTH">
+                              <t-input v-model="addFieldFormData.fieldList[index].CHARACTER_MAXIMUM_LENGTH" type="number"/>
+                            </t-form-item>
+                            <t-form-item label="主键" name="IS_NULLABLE">
                               <t-checkbox v-model="addFieldFormData.fieldList[index].IS_NULLABLE"/>
                             </t-form-item>
                           </t-space>
@@ -277,6 +286,16 @@ const removeField = (index: number) => {
 </template>
 
 <style lang="scss" scoped>
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+  width: 10px; /* 设置滚动条宽度 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: gray; /* 设置滚动条滑块颜色 */
+  border-radius: 20px;
+}
+
 .tabs-icon-margin {
   margin-right: 4px;
 }
