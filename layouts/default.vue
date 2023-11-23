@@ -11,6 +11,7 @@
         <div class="z-bottom">
             <Footer/>
         </div>
+        <SlideMenu/>
     </div>
 </template>
 
@@ -18,6 +19,7 @@
 <script lang="ts" setup>
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
+import SlideMenu from "./SlideMenu.vue";
 </script>
 
 <style lang="scss" scoped>
@@ -60,6 +62,7 @@ $full-height: calc(100vh - $nav-height);
 .z-main {
   margin-top: $nav-height;
   min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
+  background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
 }
 
 .z-bottom{
