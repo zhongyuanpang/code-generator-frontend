@@ -41,7 +41,6 @@ const process = (() => {
   let sub_column = ``
   let listTable = ``
 
-
   list.forEach((item: any)=>{
     entity += generate_entity(item)
     create_key += generate_create_key(item)
@@ -315,6 +314,24 @@ const generate_mainTable = ((item:any)=> {
     slots: {
         default: ({row}) => {
             return XEUtils.toDateString(row.${COLUMN_NAME}, 'yyyy-MM-dd')
+        }
+    }
+},`
+      break
+    case "bit":
+      result = `
+{
+    title: '${COLUMN_COMMENT}',
+    width: 150,
+    field: '${COLUMN_NAME}',
+    sortable: true,
+    filters: [{data: {vals: [], sVal: ''}}],
+    filterRender: {name: 'FilterContent'},
+    slots: {
+        default: ({row}) => {
+            return [
+                <Checkbox v-model={row.${COLUMN_NAME}} disabled/>
+            ]
         }
     }
 },`
