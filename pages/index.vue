@@ -11,7 +11,9 @@
                 <p class="description">简洁、友好、易用的代码模板生成工具。</p>
                 <p class="tagline">一款模板代码生成工具,不同于常规代码生成器。自定义代码模板,自定义连接数据库,快速选择字段生成代码减少重复工作。</p>
                 <div class="btn-group">
-                    <span class="btn-source">开源地址</span>
+                    <a href="https://github.com/zhongyuanpang/code-generator-frontend" target="_blank">
+                        <span class="btn-source">开源地址</span>
+                    </a>
                 </div>
             </div>
         </div>
