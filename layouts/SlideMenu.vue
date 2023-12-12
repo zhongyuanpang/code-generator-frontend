@@ -57,7 +57,7 @@ export default {
   position: fixed;
   right: 15px;
   bottom: 50px;
-  z-index: 999 !important;
+  z-index: 9999 !important;
   transition: .8s;
 
   .back-up {

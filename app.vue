@@ -6,9 +6,17 @@
 
 <style>
 html,body {
-  font-family: PingFang SC;
+  //font-family: PingFang SC;
+  font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
   font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .05em;
   word-spacing: 1px;
+  line-height: 1.5rem;
+  min-width: 320px;
+  direction: ltr;
+  text-rendering: optimizeLegibility;
+  transition: background-color .3s ease;
   height: 100%;
   margin: 0;
   padding: 0;

@@ -145,7 +145,7 @@ const refresh = (()=>{
 
         <!--region 结果展示 -->
         <t-divider align="left"  v-if="result">结果展示</t-divider>
-        <div style="margin-top: 50px">
+        <div>
           <t-row :gutter="16">
             <t-col :span="3">
               <t-affix ref="affix" :offset-top="100" :offset-bottom="-250">

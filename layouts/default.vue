@@ -60,9 +60,10 @@ $full-height: calc(100vh - $nav-height);
 }
 
 .z-main {
-  margin-top: $nav-height;
-  min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
-  background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
+  //padding-top: $nav-height;
+  //min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
+  min-height: calc(100%); /* 计算内容区域的最小高度 */
+  //background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
 }
 
 .z-bottom{

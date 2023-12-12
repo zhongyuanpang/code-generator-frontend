@@ -10,6 +10,7 @@
 
 header {
   position: fixed;
+  //position: sticky;
   overflow: hidden;
   top: 0;
   left: 0;
@@ -20,7 +21,9 @@ header {
   padding: 6px 100px;
   z-index: 55 !important;
   //background: #fff;
-  background: linear-gradient(45deg,#eff3fe,50%,#fbf4f7,100%,#edf2ff);
+  //background: linear-gradient(45deg,#eff3fe,50%,#fbf4f7,100%,#edf2ff);
+  background-color: #fff9;
+  backdrop-filter: blur(24px) saturate(1.5); /* 调整模糊程度和饱和度 */
   box-shadow: $default-box-shadow;
 
   .menu_bar {
