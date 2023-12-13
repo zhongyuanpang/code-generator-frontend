@@ -301,7 +301,7 @@ const removeField = (index: number) => {
 }
 
 .page {
-  padding: 55px 100px 0 100px;
+  padding: 65px 100px 0 100px;
   position: relative;
 
   .tool {
