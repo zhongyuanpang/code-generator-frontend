@@ -1,7 +1,7 @@
 //  基于useFetch()的网络请求封装
 
 //全局基础URL
-const BASEURL: string = "http://127.0.0.1:3577/";  //全局后台服务器请求地址
+const BASEURL: string = "http://127.0.0.1:3577";  //全局后台服务器请求地址
 
 //定义ts变量类型接口
 interface HttpParms {

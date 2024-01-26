@@ -198,10 +198,10 @@ const getColumnInfo = (value:string) => {
   gridOptions.data = []
   gridOptions_select.data = []
 
-  getTableColumnInfo({
-    dataBase:connection.getConnectInfo().dataBase,
-    tableName:value
-  }).then((res:any)=>{
+  let connectInfo = connection.getConnectInfo();
+  connectInfo.table = value
+
+  getTableColumnInfo(connectInfo).then((res:any)=>{
     const {code,data} = res
     if (code === 200 && data && data.length){
       gridOptions.data = res.data

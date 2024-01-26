@@ -55,9 +55,9 @@ let tableData = reactive([])
 const show = (()=>{
   selectTableVisible.value = true
 
-  const dataBase = connection.getConnectInfo().dataBase;
-  if (dataBase){
-    getAllTable(dataBase).then((res:any)=>{
+  const connectInfo = connection.getConnectInfo();
+  if (connectInfo){
+    getAllTable(connectInfo).then((res:any)=>{
       gridOptions_source.data = res.data
       tableData = res.data
     })

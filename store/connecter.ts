@@ -10,6 +10,7 @@ export const connectStore = defineStore('connection', {
             username: "",
             password: "",
             dataType: "",
+            table:"",
         }
     }),
     actions: {

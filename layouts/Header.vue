@@ -13,7 +13,7 @@ const isActive = ref<number>(0);
 const connectVisible = ref<boolean>(false);
 
 // 统一label宽度
-const formLabelWidth = '80px'
+const formLabelWidth = '100px'
 
 // 连接表单
 let connectForm = reactive<object>({
@@ -41,13 +41,16 @@ function selActive(index: number){
 const openConnect = () => {
   connectVisible.value = true
   connectForm = connection.getConnectInfo()
+
+  console.log(connectVisible.value)
+  console.log(connectForm)
 }
 
 // 数据库连接
 const connect = () => {
   connectVisible.value = false;
   Http({
-    url: '/datasource/connect',
+    url: '/datasource/connectionTest',
     method:'post',
     body:connectForm
   }).then((res: any)=>{
@@ -69,7 +72,7 @@ onMounted(() => {
 
 <template>
     <!-- 粘性导航 -->
-    <header>
+    <header class="navbar">
         <!-- 左侧菜单 -->
         <div class="menu_bar">
             <!-- logo -->
@@ -102,7 +105,7 @@ onMounted(() => {
               draggable
               destroyOnClose
               header="配置连接"
-              width="30%"
+              width="35%"
               v-model:visible="connectVisible">
             <t-form ref="form" :data="connectForm" :colon="true" size="small">
               <t-form-item label="IP地址" name="url" :label-width="formLabelWidth">
