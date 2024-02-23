@@ -9,27 +9,19 @@
 }
 
 .navbar {
-  position: fixed;
-  //position: sticky;
-  overflow: hidden;
-  top: 0;
-  left: 0;
-  width: 100%;
   display: flex;
   align-items: center;
   transition: 0.6s;
-  padding: 6px 100px;
+  padding: 6px 100px !important;
   z-index: 55 !important;
-  //background-color: #fff9;
-  background: #FFF;
-  //backdrop-filter: blur(24px) saturate(1.5) !important;
-  //-webkit-backdrop-filter: blur(24px) saturate(1.5) !important; /* 调整模糊程度和饱和度 */
+  background-color: #fff9;
+  backdrop-filter: blur(24px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.5) !important; /* 调整模糊程度和饱和度 */
   box-shadow: $default-box-shadow;
 
   .menu_bar {
     display: flex;
     flex: 1;
-
     .logo {
       position: relative;
       font-weight: 700;

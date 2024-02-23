@@ -57,6 +57,10 @@ $full-height: calc(100vh - $nav-height);
 
 .z-topBar {
   border-bottom: 1px solid #e5e5e5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .z-main {

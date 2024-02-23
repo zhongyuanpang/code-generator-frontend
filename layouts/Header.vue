@@ -98,54 +98,56 @@ onMounted(() => {
                 <t-avatar v-else size="medium" style="cursor: pointer" @click="openConnect">{{connection.connectInfo.dataBase}}</t-avatar>
             </div>
         </div>
+    </header>
 
-        <!-- 连接弹窗 -->
-        <client-only>
-          <t-dialog
-              draggable
-              destroyOnClose
-              header="配置连接"
-              width="35%"
-              v-model:visible="connectVisible">
+    <!-- 连接弹窗 -->
+    <div>
+    <client-only>
+        <t-dialog
+            draggable
+            destroyOnClose
+            header="配置连接"
+            width="35%"
+            v-model:visible="connectVisible">
             <t-form ref="form" :data="connectForm" :colon="true" size="small">
-              <t-form-item label="IP地址" name="url" :label-width="formLabelWidth">
-                <t-input v-model="connectForm.url" ></t-input>
-              </t-form-item>
-              <t-form-item label="端口号" name="port" :label-width="formLabelWidth">
-                <t-input v-model="connectForm.port" ></t-input>
-              </t-form-item>
-              <t-form-item label="数据库类型" name="dataType" :label-width="formLabelWidth">
-                <t-radio-group v-model="connectForm.dataType">
-                  <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
-                </t-radio-group>
-              </t-form-item>
-              <t-form-item label="数据库名称" name="dataBase" :label-width="formLabelWidth">
-                <t-input v-model="connectForm.dataBase" ></t-input>
-              </t-form-item>
-              <t-form-item label="用户名" name="username" :label-width="formLabelWidth">
-                <t-input v-model="connectForm.username" >
-                  <template #prefix-icon>
-                    <UserIcon />
-                  </template>
-                </t-input>
-              </t-form-item>
-              <t-form-item label="密码" name="password" :label-width="formLabelWidth">
-                <t-input type="password" v-model="connectForm.password">
-                  <template #prefix-icon>
-                    <lock-on-icon />
-                  </template>
-                </t-input>
-              </t-form-item>
+                <t-form-item label="IP地址" name="url" :label-width="formLabelWidth">
+                    <t-input v-model="connectForm.url" ></t-input>
+                </t-form-item>
+                <t-form-item label="端口号" name="port" :label-width="formLabelWidth">
+                    <t-input v-model="connectForm.port" ></t-input>
+                </t-form-item>
+                <t-form-item label="数据库类型" name="dataType" :label-width="formLabelWidth">
+                    <t-radio-group v-model="connectForm.dataType">
+                        <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
+                    </t-radio-group>
+                </t-form-item>
+                <t-form-item label="数据库名称" name="dataBase" :label-width="formLabelWidth">
+                    <t-input v-model="connectForm.dataBase" ></t-input>
+                </t-form-item>
+                <t-form-item label="用户名" name="username" :label-width="formLabelWidth">
+                    <t-input v-model="connectForm.username" >
+                        <template #prefix-icon>
+                            <UserIcon />
+                        </template>
+                    </t-input>
+                </t-form-item>
+                <t-form-item label="密码" name="password" :label-width="formLabelWidth">
+                    <t-input type="password" v-model="connectForm.password">
+                        <template #prefix-icon>
+                            <lock-on-icon />
+                        </template>
+                    </t-input>
+                </t-form-item>
             </t-form>
 
             <template #footer>
-              <t-button class="klsdj-btn" theme="danger" @click="connectVisible = false">取消</t-button>
-              <t-button @click="connect">连接</t-button>
+                <t-button class="klsdj-btn" theme="danger" @click="connectVisible = false">取消</t-button>
+                <t-button @click="connect">连接</t-button>
             </template>
 
-          </t-dialog>
-        </client-only>
-    </header>
+        </t-dialog>
+    </client-only>
+    </div>
 </template>
 
 <style lang="scss" scoped>
