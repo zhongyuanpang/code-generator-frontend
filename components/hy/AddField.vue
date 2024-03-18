@@ -9,8 +9,12 @@ const result = ref("")
 
 const tableColumnSelect = ref()
 
+// 启用lombok
+const isLombok = ref(false)
 // 是否为子表
 const isSub = ref(false)
+// 子表输入禁用为老版本
+const subDisabled = ref(false)
 
 // 重置数据
 const refresh = (()=>{
@@ -152,90 +156,46 @@ ${createInserts_values.slice(0,-1)}
 
 const generate_entity = ((item:any)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
-  let result = ``
+  let type = ``
 
   switch (DATA_TYPE) {
     case "varchar":
     case "text":
     case "longtext":
-      result =
-`
-@ApiModelProperty("${COLUMN_COMMENT}")
-private String ${COLUMN_NAME};
-
-@JsonProperty("${COLUMN_NAME}")
-public String get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
-    return this.${COLUMN_NAME};
-}
-
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(String value) {
-    this.${COLUMN_NAME} = value;
-}`;
+      type = `String`;
       break;
     case "double":
-      result =
-`
-@ApiModelProperty("${COLUMN_COMMENT}")
-private Double ${COLUMN_NAME};
-
-@JsonProperty("${COLUMN_NAME}")
-public Double get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
-    return this.${COLUMN_NAME};
-}
-
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Double value) {
-    this.${COLUMN_NAME} = value;
-}`;
+      type = `Double`;
       break
     case "int":
     case "tinyint":
-      result =
-          `
-@ApiModelProperty("${COLUMN_COMMENT}")
-private Integer ${COLUMN_NAME};
-
-@JsonProperty("${COLUMN_NAME}")
-public Integer get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
-    return this.${COLUMN_NAME};
-}
-
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Integer value) {
-    this.${COLUMN_NAME} = value;
-}`;
+      type = `Integer`;
       break;
     case "bit":
-      result =
-          `
-@ApiModelProperty("${COLUMN_COMMENT}")
-private Boolean ${COLUMN_NAME};
-
-@JsonProperty("${COLUMN_NAME}")
-public Boolean get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
-    return this.${COLUMN_NAME};
-}
-
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Boolean value) {
-    this.${COLUMN_NAME} = value;
-}`;
+      type = `Boolean`;
       break;
     case "datetime":
     case "date":
-      result =
-          `
-@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+      type = `LocalDateTime`;
+      break
+  }
+  let result = ``
+  if (type === `LocalDateTime`) {
+      result += `
+@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")`
+  }
+  result += `
 @ApiModelProperty("${COLUMN_COMMENT}")
-private Timestamp ${COLUMN_NAME};
-
+private ${type} ${COLUMN_NAME};
+${isLombok.value ? '' : `
 @JsonProperty("${COLUMN_NAME}")
-public Timestamp get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
+public ${type} get${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}() {
     return this.${COLUMN_NAME};
 }
 
-public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(Timestamp value) {
+public void set${COLUMN_NAME.slice(0, 1).toUpperCase() + COLUMN_NAME.slice(1)}(${type} value) {
     this.${COLUMN_NAME} = value;
-}`;
-      break
-  }
+}\n`}`;
 
   return result
 })
@@ -420,10 +380,9 @@ const generate_sub_edit = ((item:any)=>{
     case "text":
       result =
 `
-<template #${COLUMN_NAME}_edit="{ row}">
-  <vxe-input v-model="row.${COLUMN_NAME}"
-             :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
-                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+<template #${COLUMN_NAME}_edit="{ row,column }">
+  <vxe-input v-model="row.${COLUMN_NAME}" ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
              @focus="inputFocus($event)"></vxe-input>
 </template>`;
       break;
@@ -435,9 +394,9 @@ const generate_sub_edit = ((item:any)=>{
 <template #${COLUMN_NAME}_default="{ row }">
   <span>{{ row.${COLUMN_NAME} }} </span>
 </template>
-<template #${COLUMN_NAME}_edit="{ row }">
-  <vxe-input v-model.number="row.${COLUMN_NAME}" type="number" :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
-                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+<template #${COLUMN_NAME}_edit="{ row,column }">
+  <vxe-input v-model.number="row.${COLUMN_NAME}" type="number"  ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
              @focus="inputFocus($event)"></vxe-input>
 </template>`;
       break;
@@ -445,24 +404,22 @@ const generate_sub_edit = ((item:any)=>{
     case "date":
       result =
 `
-<template #${COLUMN_NAME}_edit="{ row }">
-  <vxe-input v-model="row.${COLUMN_NAME}" type="date" transfer :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
-                      flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+<template #${COLUMN_NAME}_edit="{ row,column }">
+  <vxe-input v-model="row.${COLUMN_NAME}" type="date" transfer  ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
              @focus="inputFocus($event)"></vxe-input>
 </template>`;
       break
     case "bit":
         result = `
-<template #${COLUMN_NAME}_default="{ row }">
-  <vxe-checkbox v-model="row.${COLUMN_NAME}"
-                :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
-                                     flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+<template #${COLUMN_NAME}_default="{ row,column }">
+  <vxe-checkbox v-model="row.${COLUMN_NAME}"  ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
                 @focus="inputFocus($event)"></vxe-checkbox>
 </template>
-<template #${COLUMN_NAME}_edit="{ row }">
-  <vxe-checkbox v-model="row.${COLUMN_NAME}"
-                :disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
-                                    flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"
+<template #${COLUMN_NAME}_edit="{ row,column }">
+  <vxe-checkbox v-model="row.${COLUMN_NAME}"  ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
+                                 flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
                 @focus="inputFocus($event)"></vxe-checkbox>
 </template>`
       break
@@ -503,7 +460,6 @@ const generate_sub_column = ((item:any)=>{
     sortable: true,
     filters: [{data: {vals: [], sVal: ''}}],
     filterRender: {name: 'FilterContent'},
-    formatter: this.formatFloat,
     editRender: {autofocus: '.vxe-input--inner', defaultValue: 0},
     slots: {default: '${COLUMN_NAME}_default', edit: '${COLUMN_NAME}_edit'},
 },`;
@@ -552,7 +508,6 @@ const generate_sub_modal = ((item:any)=>{
       result =
 `
 <vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
-               :item-render="{}"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" readonly></vxe-input>
@@ -565,7 +520,6 @@ const generate_sub_modal = ((item:any)=>{
       result =
 `
 <vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
-               :item-render="{}"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" type="number" readonly></vxe-input>
@@ -588,7 +542,6 @@ const generate_sub_modal = ((item:any)=>{
     case "bit":
       result = `
 <vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
-               :item-render="{}"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-checkbox :value="data.${COLUMN_NAME}" onclick="return false"></vxe-checkbox>
@@ -611,12 +564,10 @@ defineExpose({
         <TableColumnSelect ref="tableColumnSelect"/>
         <t-divider align="center"><h3>功能选择</h3></t-divider>
         <div style="text-align: center">
+          <t-checkbox @change="isLombok = !isLombok"><strong>启用lombok</strong></t-checkbox>
           <t-checkbox @change="isSub = !isSub"><strong>是否为子表</strong></t-checkbox>
+          <t-checkbox v-if="isSub" @change="subDisabled = !subDisabled"><strong>老版子表disabled</strong></t-checkbox>
         </div>
         <t-divider/>
     </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>

@@ -1,16 +1,16 @@
 <template>
-    <div class="z-layout">
-        <div class="z-topBar">
+    <div class="layout">
+        <div class="navbar">
             <Header/>
         </div>
-        <div class="z-main">
+        <div class="page">
             <transition name="fade-transform" mode="out-in">
                 <slot class="nuxt"/>
             </transition>
         </div>
-        <div class="z-bottom">
-            <Footer/>
-        </div>
+<!--        <div class="footer">-->
+<!--            <Footer/>-->
+<!--        </div>-->
         <SlideMenu/>
     </div>
 </template>
@@ -49,28 +49,24 @@ $full-height: calc(100vh - $nav-height);
   transform: translateX(30px);
 }
 
-.z-layout {
+.layout {
   margin: 0;
   padding: 0;
-  height: $full-height;
 }
 
-.z-topBar {
-  border-bottom: 1px solid #e5e5e5;
+.navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: $nav-height;
 }
 
-.z-main {
-  //padding-top: $nav-height;
-  //min-height: calc(100% - 57px); /* 计算内容区域的最小高度 */
-  min-height: calc(100%); /* 计算内容区域的最小高度 */
-  //background: linear-gradient(45deg, #eff3fe 0%, #fbf4f7 50%, #edf2ff 100%);
+.page {
+  height: 100vh;
 }
 
-.z-bottom{
+.footer{
 }
 
 </style>

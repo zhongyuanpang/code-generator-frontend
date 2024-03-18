@@ -200,8 +200,7 @@ const refresh = (()=>{
 
 <style lang="scss" scoped>
 .page{
-    padding: 0 100px;
-    position: relative;
+    padding: 55px 100px 0 100px;
 
     .generate_content{
         padding: 20px 30px;

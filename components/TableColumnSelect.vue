@@ -301,12 +301,8 @@ defineExpose({
 <style scoped lang="scss">
 
 .table-column-select{
-  position: relative;
-  //box-shadow: $default-box-shadow;
-  //border-radius: 10px;
 
   .menu{
-      margin-top: 50px;
       padding: 15px;
       border-radius: 7px;
       box-shadow: $default-box-shadow;

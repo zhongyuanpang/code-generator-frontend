@@ -9,12 +9,13 @@
 }
 
 .navbar {
+  height: 55px;
   display: flex;
   align-items: center;
   transition: 0.6s;
-  padding: 6px 100px !important;
-  z-index: 55 !important;
-  background-color: #fff9;
+  padding: 0 100px !important;
+  //z-index: 9999 !important;
+  //background-color: #fff9;
   backdrop-filter: blur(24px) saturate(1.5) !important;
   -webkit-backdrop-filter: blur(24px) saturate(1.5) !important; /* 调整模糊程度和饱和度 */
   box-shadow: $default-box-shadow;

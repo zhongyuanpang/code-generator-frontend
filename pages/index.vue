@@ -19,9 +19,9 @@
         </div>
 
         <!-- 案例展示 -->
-        <div class="video">
+<!--        <div class="video">-->
 
-        </div>
+<!--        </div>-->
     </div>
 </template>
 

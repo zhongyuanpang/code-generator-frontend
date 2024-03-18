@@ -131,7 +131,3 @@ defineExpose({
       </client-only>
     </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>
