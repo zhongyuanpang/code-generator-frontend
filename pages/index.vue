@@ -19,18 +19,16 @@
         </div>
 
         <!-- 案例展示 -->
-<!--        <div class="video">-->
+        <div class="video">
 
-<!--        </div>-->
+        </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
 .page{
     .banner-brand__wrapper{
-        //height: calc(100vh - 56px);
         height: calc(100vh);
-        //background-image: url("https://pic1.58cdn.com.cn/nowater/webim/big/n_v25e4330ca575a4ba0acbbc276e4ead72e.png");
         background: url("/assets/images/bg.svg") no-repeat center center;
         background-size: cover;
         display: flex;

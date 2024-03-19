@@ -244,12 +244,12 @@ defineExpose({
                 <t-col :span="2">
                     <t-button block @click="getTable">选择数据源</t-button>
                 </t-col>
-                <t-col :span="3">
+                <t-col :span="5">
                     <div class="show_data_info">
                         当前数据表：{{selectTableName}}
                     </div>
                 </t-col>
-                <t-col :span="7" style="text-align: right">
+                <t-col :span="5" style="text-align: right">
                   <t-space>
                     <t-input v-model="searchValue" auto-width clearable placeholder="请输入" style="width: 300px;"/>
                     <t-button @click="selectColumn">确认选择</t-button>
@@ -257,13 +257,8 @@ defineExpose({
                 </t-col>
             </t-row>
         </div>
+
         <t-divider align="left"><strong>字段选择</strong></t-divider>
-
-<!--        <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>-->
-
-<!--        <t-divider align="left">选择列表</t-divider>-->
-
-<!--        <vxe-grid v-bind="gridOptions_select" round stripe/>-->
 
         <t-row  :gutter="16">
             <t-col :span="6">
@@ -276,30 +271,10 @@ defineExpose({
 
         <!-- 连接弹窗 -->
         <TableSelect ref="tableSelect" @getColumnInfo="getColumnInfo"/>
-
-<!--        <client-only>-->
-<!--          <t-dialog-->
-<!--              destroyOnClose-->
-<!--              header="选择数据源"-->
-<!--              width="60%"-->
-<!--              v-model:visible="selectTableVisible">-->
-<!--              <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入" @change="search" style="width: 300px;"/>-->
-<!--              <vxe-grid v-bind="gridOptions_source"-->
-<!--                        round-->
-<!--                        stripe-->
-<!--                        @radio-change="selectTable"-->
-<!--                        @cell-dblclick="onTableDbClick"/>-->
-<!--            <template #footer>-->
-<!--              <span></span>-->
-<!--            </template>-->
-<!--          </t-dialog>-->
-<!--        </client-only>-->
-
     </div>
 </template>
 
 <style scoped lang="scss">
-
 .table-column-select{
 
   .menu{

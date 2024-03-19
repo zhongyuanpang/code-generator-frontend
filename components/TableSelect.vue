@@ -51,7 +51,9 @@ const selectTableVisible = ref(false)
 const searchTableValue = ref("")
 let tableData = reactive([])
 
-// 展示弹窗展示方法
+/**
+ * 展示弹窗展示方法
+ */
 const show = (()=>{
   selectTableVisible.value = true
 
@@ -64,6 +66,9 @@ const show = (()=>{
   }
 })
 
+/**
+ * 搜索过滤表
+ */
 const search = () => {
   const search = searchTableValue.value
   //获取输入的关键字
@@ -118,7 +123,7 @@ defineExpose({
             header="选择数据源"
             width="60%"
             v-model:visible="selectTableVisible">
-          <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入" @change="search" style="width: 300px;"/>
+          <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入" @change="search" style="width: 300px;margin-bottom: 10px"/>
           <vxe-grid v-bind="gridOptions_source"
                     round
                     stripe

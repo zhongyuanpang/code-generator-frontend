@@ -17,17 +17,13 @@ const result = ref("")
 const resultVisible = ref(false)
 // 选择的标签
 const selectTagValue = ref("")
-const selectTagRef = ref("")
 const addField = ref();
 
 // 标签选择事件
-const onChange = ((obj: any)=>{
-  selectTagValue.value = obj.name
-  selectTagRef.value = obj.ref
-  drawerVisible.value = false
-  TEMPLATE_STORE.SET_SELECT_TAG_VALUE(obj.name)
-  TEMPLATE_STORE.SET_SELECT_TAG_REF(obj.ref)
-})
+const onChange = (checkedValues : any) => {
+  selectTagValue.value = checkedValues || ''
+  TEMPLATE_STORE.SET_SELECT_TAG_VALUE(checkedValues)
+};
 
 // 模板列表
 const templateList = reactive([
@@ -38,12 +34,7 @@ const templateList = reactive([
     collapseList:[
       {
         name:"基本",
-        tagList:[
-          {
-            name:'column',
-            ref:'tableColumnSelect'
-          }
-        ]
+        tagList:['column']
       },
     ],
   },
@@ -62,12 +53,7 @@ const templateList = reactive([
       },
       {
         name:"前后端",
-        tagList:[
-          {
-            name:'新增字段',
-            ref:'addField'
-          }
-        ]
+        tagList:['新增字段']
       },
     ],
 
@@ -76,9 +62,7 @@ const templateList = reactive([
 
 onMounted(()=>{
   selectTagValue.value = TEMPLATE_STORE.GET_SELECT_TAG_VALUE()
-  selectTagRef.value = TEMPLATE_STORE.GET_SELECT_TAG_REF()
   result.value = TEMPLATE_STORE.GET_RESULT()
-
 
   nextTick(()=>{
     Prism.highlightAll()
@@ -92,8 +76,8 @@ onMounted(()=>{
 // 生成数据
 const generate = (()=>{
     let value = null;
-    switch (selectTagRef.value){
-      case "addField":
+    switch (selectTagValue.value){
+      case "新增字段":
         value = addField.value.process()
         break
     }
@@ -120,11 +104,10 @@ const clear = (()=>{
   TEMPLATE_STORE.SET_RESULT_VISIBLE(false)
 })
 
-
 // 重置数据
 const refresh = (()=>{
-  switch (selectTagRef.value){
-    case "addField":
+  switch (selectTagValue.value){
+    case "新增字段":
       addField.value.refresh()
       break
   }
@@ -174,8 +157,8 @@ const refresh = (()=>{
               <t-collapse expand-icon-placement="right">
                 <t-collapse-panel v-for="(itm,idx) in item.collapseList" :key="idx" :value="itm.name" :header="itm.name">
                   <t-space align="center" v-if="itm.tagList.length">
-                    <t-radio-group>
-                      <t-radio v-for="(tag,i) in itm.tagList" :key="i" :value="tag.name" @click="onChange(tag)">{{tag.name}}</t-radio>
+                    <t-radio-group :default-value="selectTagValue" @change="onChange">
+                      <t-radio v-for="(tag,i) in itm.tagList" allow-uncheck :key="i" :value="tag">{{tag}}</t-radio>
                     </t-radio-group>
                   </t-space>
                 </t-collapse-panel>
@@ -209,21 +192,20 @@ const refresh = (()=>{
     }
 
     .sticky-tool{
-        width: 100%;
-        position: fixed;
-        bottom: 55px;
-        left: 45%;
-        transform: translateX(-45%);
-        line-height: 40px;
-        padding: 0 40px;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        border-radius: 20px;
-        user-select: none;
-        z-index: 9999 !important;
+      position: fixed;
+      bottom: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 40px;
+      padding: 0 40px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 20px;
+      user-select: none;
+      z-index: 9999 !important;
 
         & div{
           padding: 0 25px;

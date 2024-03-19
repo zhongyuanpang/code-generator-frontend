@@ -60,6 +60,7 @@ $full-height: calc(100vh - $nav-height);
   left: 0;
   width: 100%;
   height: $nav-height;
+  z-index: 999;
 }
 
 .page {

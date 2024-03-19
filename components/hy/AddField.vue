@@ -563,11 +563,11 @@ defineExpose({
     <div>
         <TableColumnSelect ref="tableColumnSelect"/>
         <t-divider align="center"><h3>功能选择</h3></t-divider>
-        <div style="text-align: center">
-          <t-checkbox @change="isLombok = !isLombok"><strong>启用lombok</strong></t-checkbox>
+        <t-space>
+          <t-checkbox @change="isLombok = !isLombok"><strong>启用lombok</strong><HelpCircleIcon /></t-checkbox>
           <t-checkbox @change="isSub = !isSub"><strong>是否为子表</strong></t-checkbox>
           <t-checkbox v-if="isSub" @change="subDisabled = !subDisabled"><strong>老版子表disabled</strong></t-checkbox>
-        </div>
+        </t-space>
         <t-divider/>
     </div>
 </template>
