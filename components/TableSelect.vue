@@ -56,6 +56,7 @@ let tableData = reactive([])
  */
 const show = (()=>{
   selectTableVisible.value = true
+  searchTableValue.value = ""
 
   const connectInfo = connection.getConnectInfo();
   if (connectInfo){
