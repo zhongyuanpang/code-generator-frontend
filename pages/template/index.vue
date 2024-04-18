@@ -316,7 +316,7 @@ const onMouseDown = ((event:any) => {
 }
 
 
-::v-deep .divider{
+:deep(.divider){
   color: $base-color !important;
   font-size: larger;
   font-weight: bolder;

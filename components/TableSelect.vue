@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineEmits, reactive, ref} from 'vue'
+import {reactive, ref} from 'vue'
 import {getAllTable} from "~/composables/api/template";
 import {connectStore} from "~/store/connecter";
 

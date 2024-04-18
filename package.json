@@ -17,6 +17,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
     "@types/prismjs": "^1.26.1",
+    "autoprefixer": "10.4.5",
     "element-plus": "^2.3.8",
     "markdown-it": "^13.0.2",
     "mavon-editor": "3.0.0-beta",

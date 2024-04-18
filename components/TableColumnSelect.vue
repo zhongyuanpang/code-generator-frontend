@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted,onBeforeUnmount,reactive, ref,nextTick,defineEmits} from 'vue'
+import {onMounted,onBeforeUnmount,reactive, ref,nextTick} from 'vue'
 import Sortable from "sortablejs";
 import {connectStore} from "~/store/connecter";
 import {getTableColumnInfo} from "~/composables/api/template";

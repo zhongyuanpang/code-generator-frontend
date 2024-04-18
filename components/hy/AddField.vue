@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted,reactive, ref,nextTick,defineEmits} from 'vue'
+import {ref} from 'vue'
 import {MessagePlugin} from 'tdesign-vue-next';
 import MarkdownIt from 'markdown-it';
 import TableColumnSelect from "~/components/TableColumnSelect.vue";
