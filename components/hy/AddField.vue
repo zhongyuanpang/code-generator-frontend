@@ -16,7 +16,9 @@ const isSub = ref(false)
 // 子表输入禁用为老版本
 const subDisabled = ref(false)
 
-// 重置数据
+/**
+ * 重置数据
+ */
 const refresh = (()=>{
   tableColumnSelect.value.refresh()
 })
@@ -154,6 +156,7 @@ ${createInserts_values.slice(0,-1)}
   return md.render(newStr);
 })
 
+// region 《- 生成代码 -》
 const generate_entity = ((item:any)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
   let type = ``
@@ -240,6 +243,10 @@ const generate_updateBase = ((item:any)=>{
       result = `
 ${COLUMN_NAME} : '',`;
       break;
+    case "bit":
+      result = `
+${COLUMN_NAME} : 0,`;
+      break;
     case "double":
     case "int":
     case "tinyint":
@@ -290,7 +297,7 @@ const generate_mainTable = ((item:any)=> {
     slots: {
         default: ({row}) => {
             return [
-                <Checkbox v-model={row.${COLUMN_NAME}} disabled/>
+                <Checkbox value={row.${COLUMN_NAME}} disabled/>
             ]
         }
     }
@@ -552,6 +559,7 @@ const generate_sub_modal = ((item:any)=>{
 
   return result
 })
+// endregion
 
 defineExpose({
   process,

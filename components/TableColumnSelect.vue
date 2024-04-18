@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import {onMounted,reactive, ref,nextTick,defineEmits} from 'vue'
+import {onMounted,onBeforeUnmount,reactive, ref,nextTick,defineEmits} from 'vue'
+import Sortable from "sortablejs";
 import {connectStore} from "~/store/connecter";
 import {getTableColumnInfo} from "~/composables/api/template";
 import TableSelect from "~/components/TableSelect.vue";
 import {tableColumnSelectStore} from '~/store/tableColumnSelect'
+import {MessagePlugin} from 'tdesign-vue-next';
 const emit = defineEmits(['refresh'])
 
 // 连接信息
@@ -15,6 +17,16 @@ onMounted(()=>{
   gridOptions.data = TABLE_COLUMN_SELECT_STORE.GET_GRID_OPTIONS_DATA()
   gridOptions_select.data = TABLE_COLUMN_SELECT_STORE.GET_GRID_OPTIONS_SELECT_DATA()
   selectTableName.value = TABLE_COLUMN_SELECT_STORE.GET_SELECT_TABLE_NAME()
+
+  // 行拖拽
+  rowDrop();
+})
+
+/**
+ * 页面卸载
+ */
+onBeforeUnmount(() => {
+
 })
 
 // 表格信息展示配置
@@ -93,6 +105,11 @@ const gridOptions = reactive({
   data: []
 })
 
+// 行拖拽展示提示
+const showHelpTip = ref(false)
+// 行拖拽展示控制
+const rowDrag = ref(false)
+
 // 选中信息展示配置
 const gridOptions_select = reactive({
   border: true,
@@ -109,6 +126,28 @@ const gridOptions_select = reactive({
       fixed: 'left'
     },
     { type: 'seq',width: 50},
+    {
+      width: 60,
+      slots: {
+        default: () => {
+          return [
+            h('span', { class: 'drag-btn' }, [
+              h('i', { class: 'fa fa-arrows' })
+            ])
+          ]
+        },
+        header: () => {
+          return [
+            h('vxe-tooltip', { content: "按住后可以上下拖动排序！", enterable: true }, [
+              h('i', {
+                class: 'vxe-icon-question-circle-fill',
+                onClick: () => { showHelpTip.value = !showHelpTip.value }
+              })
+            ])
+          ]
+        }
+      }
+    },
     {
       field: 'COLUMN_NAME',
       title: '字段',
@@ -179,6 +218,7 @@ const searchValue = ref("")
 const selectTableName = ref("")
 
 const gridRef = ref();
+const gridSelectRef = ref();
 const tableSelect = ref();
 
 /**
@@ -231,6 +271,47 @@ const refresh = (()=>{
   TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_SELECT_DATA([])
 })
 
+/**
+ * 表格双击事件
+ *
+ * @param row
+ * @param $rowIndex
+ */
+const onTableDbClick = ({ row, $rowIndex }: { row: any, $rowIndex: number }) => {
+  // 校验是否重复选择字段
+  const exists = gridOptions_select.data.some(item => item.COLUMN_NAME === row.COLUMN_NAME);
+  if (exists) {
+    return MessagePlugin.warning(`${row.COLUMN_NAME} 已存在`);
+  }
+
+  gridOptions_select.data.push(row);
+  TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_SELECT_DATA(gridOptions_select.data)
+};
+
+/** 行拖拽 */
+const rowDrop = (() => {
+  nextTick(() => {
+    // let xGrid = this.$refs.xGrid
+    // rowDrag.value = Sortable.create(xGrid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'), {
+    //   handle: '.drag-btn',
+    //   onEnd: ({ newIndex, oldIndex }) => {
+    //     const currRow = this.tableData.splice(oldIndex, 1)[0]
+    //     this.tableData.splice(newIndex, 0, currRow)
+    //   }
+    // })
+    const xGrid = gridRef.value;
+    if (xGrid) {
+      rowDrag.value = Sortable.create(xGrid.$el.querySelector('.body--wrapper > .vxe-table--body tbody'), {
+        handle: '.drag-btn',
+        onEnd: ({ newIndex, oldIndex }: { newIndex: number, oldIndex: number }) => {
+          const currRow = gridOptions_select.data.splice(oldIndex, 1)[0];
+          gridOptions_select.data.splice(newIndex, 0, currRow);
+        }
+      });
+    }
+  })
+})
+
 // 对外暴露属性 | 方法
 defineExpose({
   gridOptions_select,refresh
@@ -262,10 +343,10 @@ defineExpose({
 
         <t-row  :gutter="16">
             <t-col :span="6">
-                <vxe-grid ref="gridRef" v-bind="gridOptions" round stripe/>
+                <vxe-grid ref="gridRef" v-bind="gridOptions" @cell-dblclick="onTableDbClick" round stripe/>
             </t-col>
             <t-col :span="6">
-                <vxe-grid v-bind="gridOptions_select" round stripe/>
+                <vxe-grid ref="gridSelectRef" v-bind="gridOptions_select" round stripe/>
             </t-col>
         </t-row>
 

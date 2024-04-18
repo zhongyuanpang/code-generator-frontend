@@ -1,27 +1,47 @@
 <script setup lang="ts">
 import TableColumnSelect from "~/components/TableColumnSelect.vue";
 import AddField from "~/components/hy/AddField.vue";
+import ExcelPaste from "~/components/hy/ExcelPaste.vue";
+import ImageUpload from "~/components/hy/ImageUpload.vue";
 import {ref,onMounted,nextTick} from 'vue'
 import {reactive} from "#imports";
 import Prism from 'prismjs'
 import Result from "~/components/Result.vue";
 import {templateStore} from "~/store/template";
 
-// 缓存信息
+// 页面缓存信息
 const TEMPLATE_STORE = templateStore();
 
 // 抽屉展示状态
 const drawerVisible = ref<boolean>(false)
+
 // 生成的结果
 const result = ref("")
 const resultVisible = ref(false)
+
 // 选择的标签
 const selectTagValue = ref("")
+
+// region 《- refs -》
+
+// region < 组件ref >
 const addField = ref();
+const excelPaste = ref();
+const imageUpload = ref();
+// endregion
+
+// 悬浮菜单
+const suspendedMenu = ref();
+
+// endregion
 
 // 标签选择事件
 const onChange = (checkedValues : any) => {
+  // 清除上一次的结果
+  clear()
+  // 设置当前选择的标签
   selectTagValue.value = checkedValues || ''
+  // 设置选择的标签值
   TEMPLATE_STORE.SET_SELECT_TAG_VALUE(checkedValues)
 };
 
@@ -45,7 +65,7 @@ const templateList = reactive([
     collapseList:[
       {
         name:"前端",
-        tagList:[]
+        tagList:["EXCEL粘贴","图片上传"]
       },
       {
         name:"后端",
@@ -79,6 +99,12 @@ const generate = (()=>{
     switch (selectTagValue.value){
       case "新增字段":
         value = addField.value.process()
+        break
+      case "EXCEL粘贴":
+        value = excelPaste.value.process()
+        break
+      case "图片上传":
+        value = imageUpload.value.process()
         break
     }
     if (value instanceof Promise) return
@@ -117,6 +143,32 @@ const refresh = (()=>{
   TEMPLATE_STORE.SET_RESULT("")
   TEMPLATE_STORE.SET_RESULT_VISIBLE(false)
 })
+
+/**
+ * 拖动悬浮菜单
+ */
+const onMouseDown = ((event:any) => {
+  const box = suspendedMenu.value;
+  const startX = event.clientX;
+  const startY = event.clientY;
+  const offsetX = startX - box.offsetLeft;
+  const offsetY = startY - box.offsetTop;
+
+  const onMouseMove = (event : any) => {
+    const left = event.clientX - offsetX;
+    const top = event.clientY - offsetY;
+    box.style.left = left + "px";
+    box.style.top = top + "px";
+  };
+
+  const onMouseUp = () => {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
+
+  document.addEventListener("mousemove", onMouseMove);
+  document.addEventListener("mouseup", onMouseUp);
+})
 </script>
 
 <template>
@@ -124,10 +176,12 @@ const refresh = (()=>{
         <!--region  < 模板展示 > -->
         <TableColumnSelect ref="tableColumnSelect" v-if="selectTagValue === 'column'"/>
         <AddField ref="addField" v-if="selectTagValue === '新增字段'"/>
+        <ExcelPaste ref="excelPaste" v-if="selectTagValue === 'EXCEL粘贴'"/>
+        <ImageUpload ref="imageUpload" v-if="selectTagValue === '图片上传'"/>
         <!--endregion  -->
 
         <!--region 结果展示 -->
-        <t-divider align="left"  v-if="result">结果展示</t-divider>
+        <t-divider align="left" v-if="result"><strong>结果展示</strong></t-divider>
         <div>
           <t-row :gutter="16">
             <t-col :span="3">
@@ -169,12 +223,12 @@ const refresh = (()=>{
         </client-only>
         <!--endregion -->
 
-        <!-- 侧边栏 -->
-        <div class="sticky-tool">
-            <div class="btn-tool" @click="drawerVisible = true">选择模板</div>
-            <div class="btn-tool" @click="generate">生成结果</div>
-            <div class="btn-tool" @click="clear">清空</div>
-            <div class="btn-tool" @click="refresh">重置</div>
+        <!-- 功能菜单 -->
+        <div class="sticky-tool" ref="suspendedMenu" @mousedown="onMouseDown">
+            <div class="btn-tool" @click="drawerVisible = true"><i class="iconfont icon-moban"/></div>
+            <div class="btn-tool" @click="generate"><i class="iconfont icon-shengchengdaima"/></div>
+            <div class="btn-tool" @click="clear"><i class="iconfont icon-qingchu"/></div>
+            <div class="btn-tool" @click="refresh"><i class="iconfont icon-reset"/></div>
         </div>
 
         <!-- 生成结果展示 -->
@@ -192,26 +246,45 @@ const refresh = (()=>{
     }
 
     .sticky-tool{
+      background: rgba(238, 238, 238, .6);
       position: fixed;
       bottom: 55px;
       left: 50%;
+      width: 250px;
+      padding: 0 30px;
+      height: 70px;
       transform: translateX(-50%);
-      line-height: 40px;
-      padding: 0 40px;
       color: white;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: space-between;
       cursor: pointer;
-      border-radius: 20px;
+      border-radius: 35px;
       user-select: none;
       z-index: 9999 !important;
 
         & div{
-          padding: 0 25px;
-          background: $default-background;
-          margin-right: 10px;
-          border-radius: 20px;
+          width: 50px;
+          height: 50px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          border-radius: 50%;
+          box-shadow: 0 0 17px rgba(0, 0, 0, 0.5);
+
+          & i{
+            color: grey;
+            font-weight: bolder;
+            font-size: 1.2em;
+            transition:all .2s;
+          }
+
+          &:hover{
+            & i{
+              color: white;
+            }
+          }
         }
 
         .btn-tool {

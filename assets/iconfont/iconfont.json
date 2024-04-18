@@ -1,0 +1,65 @@
+{
+  "id": "4514204",
+  "name": "templateCode",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "59701",
+      "name": "清空",
+      "font_class": "qingkong",
+      "unicode": "e799",
+      "unicode_decimal": 59289
+    },
+    {
+      "icon_id": "4329214",
+      "name": "清除",
+      "font_class": "qingchu",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "9495517",
+      "name": "模板",
+      "font_class": "moban",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "9928611",
+      "name": "reset",
+      "font_class": "reset",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "18008058",
+      "name": "生成代码-",
+      "font_class": "shengchengdaima-",
+      "unicode": "e6ce",
+      "unicode_decimal": 59086
+    },
+    {
+      "icon_id": "605457",
+      "name": "代码生成",
+      "font_class": "weibiaoti46",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "37597884",
+      "name": "生成代码",
+      "font_class": "shengchengdaima",
+      "unicode": "e6ff",
+      "unicode_decimal": 59135
+    },
+    {
+      "icon_id": "1304965",
+      "name": "Clear-1",
+      "font_class": "15qingkong-1",
+      "unicode": "e680",
+      "unicode_decimal": 59008
+    }
+  ]
+}

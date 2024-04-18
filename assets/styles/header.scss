@@ -18,6 +18,8 @@
   backdrop-filter: blur(24px) saturate(1.5) !important;
   -webkit-backdrop-filter: blur(24px) saturate(1.5) !important; /* 调整模糊程度和饱和度 */
   box-shadow: $default-box-shadow;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
 
   .menu_bar {
     display: flex;

@@ -17,6 +17,7 @@ export default defineNuxtConfig({
       "~/assets/lib/prism/themes/BlackMac.css",
       "~/assets/lib/prism/prism.css",
       "~/assets/styles/typo.css",
+      "~/assets/iconfont/iconfont.css",
   ],
   modules: [
     '@pinia/nuxt',

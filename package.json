@@ -25,6 +25,7 @@
     "prismjs": "^1.29.0",
     "sass": "^1.64.2",
     "sass-loader": "^13.3.2",
+    "sortablejs": "^1.15.2",
     "tdesign-icons-vue-next": "^0.2.2",
     "tdesign-vue-next": "^1.5.6",
     "vxe-table": "^4.4.2",
