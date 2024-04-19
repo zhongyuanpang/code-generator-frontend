@@ -97,6 +97,19 @@ onMounted(() => {
                 <t-button @click="openConnect" v-if="!connection.connectInfo.dataBase">连接</t-button>
                 <t-avatar v-else size="medium" style="cursor: pointer" @click="openConnect">{{connection.connectInfo.dataBase}}</t-avatar>
             </div>
+
+<!--            <div class="theme-switcher">-->
+<!--                <input type="radio" name="themes" id="light-theme"/>-->
+<!--                <label for="light-theme">-->
+<!--                  <ModeLightIcon />-->
+<!--                  <span>Light</span>-->
+<!--                </label>-->
+<!--                <input type="radio" name="themes" id="dark-theme"/>-->
+<!--                <label for="dark-theme">-->
+<!--                  <ModeDarkIcon />-->
+<!--                  <span>Dark</span>-->
+<!--                </label>-->
+<!--            </div>-->
         </div>
     </header>
 
@@ -152,4 +165,36 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @import "~/assets/styles/header.scss";
+
+  //
+  //.theme-switcher input {
+  //  display: none;
+  //}
+  //
+  //.theme-switcher {
+  //  position: relative;
+  //  background-color: var(--c-bg-secondary);
+  //  border-radius: 10px;
+  //  display: flex;
+  //  padding: 0 3px;
+  //
+  //  & label {
+  //    position: relative;
+  //    display: flex;
+  //    z-index: 2;
+  //    padding: 8px 0;
+  //    width: calc(100% / 2);
+  //    color: var(--c-text-secondary);
+  //    & span {
+  //      display: flex;
+  //      justify-content: center;
+  //      font-weight: 600;
+  //      opacity: 0.8;
+  //      &:hover{
+  //        opacity: 1;
+  //        cursor: pointer;
+  //      }
+  //    }
+  //  }
+  //}
 </style>
