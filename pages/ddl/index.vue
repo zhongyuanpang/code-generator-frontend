@@ -1,17 +1,19 @@
-<script setup lang="ts">
+<script setup>
 import {reactive, ref} from 'vue'
 import TableSelect from "~/components/TableSelect.vue";
 import MarkdownIt from 'markdown-it';
 import Prism from 'prismjs'
+import {MessagePlugin} from 'tdesign-vue-next';
 import {getTableColumnInfo} from "~/composables/api/template";
 
 //region  《 变量 、 常量 》
 
 // 选择生成数据库类型
-const dataBaseOptions = reactive<any>([
+const dataBaseOptions = reactive([
   'MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MongoDB'
 ])
 
+// 表单校验
 const FORM_RULES = {
   tableName: [{ required: true, message: '表名必填' }] ,
   DATA_TYPE: [{ required: true, message: '表名必填' }] ,
@@ -33,8 +35,8 @@ const result = ref("")
 const value = ref('add');
 
 // 字段类型
-const DATA_TYPE_OPTIONS = ["bigint","bit","char","date","datetime","decimal"
-  ,"double","int","text","longtext","tinyint","varchar"]
+const DATA_TYPE_OPTIONS = ["varchar","double","bigint","bit","char","date","datetime","decimal"
+  ,"int","text","longtext","tinyint"]
 
 //endregion
 
@@ -45,12 +47,12 @@ const tableSelect = ref();
 
 //region  《 事件 》
 
-const handlePanelChange = (val: any) => {
+const handlePanelChange = (val) => {
   console.log(val);
 };
 
 // tabs切换事件
-const handlerChange = (newValue: string) => {
+const handlerChange = (newValue) => {
   value.value = newValue;
 };
 
@@ -66,13 +68,36 @@ const generate = (() => {
 const generateAdd = () => {
   const tableName = addFieldFormData.tableName;
   const fieldList = addFieldFormData.fieldList;
+  if (!tableName) return MessagePlugin.warning('请先选择数据表！！');
+  if (!fieldList || !fieldList.length) return MessagePlugin.warning('请先添加字段！！');
 
   let str = ``
-//  ALTER TABLE proddmv ADD jzrqcreationdate datetime COMMENT '制作日期';
+
   fieldList.forEach(item=>{
     const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_DEFAULT,IS_NULLABLE,COLUMN_KEY} = item
-    str += `
-ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE} COMMENT '${COLUMN_COMMENT}';`
+    switch (DATA_TYPE) {
+      case "date":
+      case "datetime":
+      case "text":
+      case "longtext":
+        str +=
+            `ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE} COMMENT '${COLUMN_COMMENT}';`
+        break
+      case "varchar":
+        str +=
+            `ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE}(${CHARACTER_MAXIMUM_LENGTH}) DEFAULT ${COLUMN_DEFAULT ? `'${COLUMN_DEFAULT}'` : `''`} COMMENT '${COLUMN_COMMENT}';`
+        break
+      case "double":
+      case "bit":
+      case "int":
+        str +=
+            `ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE}(${CHARACTER_MAXIMUM_LENGTH}) DEFAULT ${COLUMN_DEFAULT ? `${COLUMN_DEFAULT}` : 0} COMMENT '${COLUMN_COMMENT}';`
+        break
+      default:
+        str +=
+            `ALTER TABLE ${tableName} ADD ${COLUMN_NAME} ${DATA_TYPE}(${CHARACTER_MAXIMUM_LENGTH}) DEFAULT '' COMMENT '${COLUMN_COMMENT}';`
+        break
+    }
   })
 
 
@@ -111,7 +136,7 @@ const getTable = (()=>{
  * 根据表名获取字段信息
  * @param value
  */
-const getColumnInfo = (value:string) => {
+const getColumnInfo = (value) => {
   console.log(value)
   selectTableName.value = value
   // selectTableName.value = value
@@ -135,7 +160,7 @@ const getColumnInfo = (value:string) => {
  * 移除字段
  * @param index
  */
-const removeField = (index: number) => {
+const removeField = (index) => {
   addFieldFormData.fieldList.splice(index,1)
 }
 
@@ -160,7 +185,6 @@ const removeField = (index: number) => {
                       新增字段
                     </template>
                     <!-- region 新增表单 -->
-
                     <t-form ref="form" :rules="FORM_RULES" label-align="left"  :data="addFieldFormData" :colon="true">
                       <t-form-item label="表名" name="tableName">
                         <t-input v-model="addFieldFormData.tableName" disabled></t-input>
@@ -315,7 +339,7 @@ const removeField = (index: number) => {
 
       .gen-btn {
         position: absolute;
-        bottom: 20px;
+        bottom: 10px;
         width: 100%;
         display: flex;
 
