@@ -11,6 +11,8 @@ const tableColumnSelect = ref()
 
 // 启用lombok
 const isLombok = ref(false)
+// 国际化
+const isI18n = ref(false)
 // 是否为子表
 const isSub = ref(false)
 // 子表输入禁用为老版本
@@ -28,6 +30,7 @@ const refresh = (()=>{
  */
 const process = (() => {
   const list = tableColumnSelect.value.gridOptions_select.data;
+  const tableName = tableColumnSelect.value.selectTableName
   if (!list || !list.length) return MessagePlugin.warning('请选择数据');
 
   let entity = ''
@@ -58,13 +61,13 @@ const process = (() => {
 
     if (isSub.value){
       sub_edit += generate_sub_edit(item)
-      sub_column += generate_sub_column(item)
-      sub_modal += generate_sub_modal(item)
-      listTable += generate_mainTable(item)
+      sub_column += generate_sub_column(item,tableName)
+      sub_modal += generate_sub_modal(item,tableName)
+      listTable += generate_mainTable(item,tableName)
     }else {
       updateBase += generate_updateBase(item)
-      mainTable += generate_mainTable(item)
-      formItem += generate_formItem(item)
+      mainTable += generate_mainTable(item,tableName)
+      formItem += generate_formItem(item,tableName)
     }
   })
 
@@ -178,15 +181,21 @@ const generate_entity = ((item:any)=>{
       type = `Boolean`;
       break;
     case "datetime":
-    case "date":
       type = `LocalDateTime`;
+      break
+    case "date":
+      type = `LocalDate`;
       break
   }
   let result = ``
-  if (type === `LocalDateTime`) {
-      result += `
-@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")`
-  }
+//   if (type === `LocalDateTime`) {
+//       result += `
+// @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")`
+//   }
+//   if (type === `LocalDate`) {
+//       result += `
+// @JsonFormat(pattern="yyyy-MM-dd",timezone="GMT+8")`
+//   }
   result += `
 @ApiModelProperty("${COLUMN_COMMENT}")
 private ${type} ${COLUMN_NAME};
@@ -263,24 +272,24 @@ ${COLUMN_NAME} : null,`;
   return result
 })
 
-const generate_mainTable = ((item:any)=> {
+const generate_mainTable = ((item:any,tableName:string)=> {
   const {COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE} = item
+
   let result = ``
 
   switch (DATA_TYPE){
     case "datetime":
     case "date":
       result = `
-{
-    title: '${COLUMN_COMMENT}',
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
     filters: [{data: {vals: [], sVal: ''}}],
     filterRender: {name: 'FilterContent'},
     slots: {
-        default: ({row}) => {
-            return XEUtils.toDateString(row.${COLUMN_NAME}, 'yyyy-MM-dd')
+        default: ({row,column}) => {
+            return XEUtils.toDateString(row[column.field], 'yyyy-MM-dd')
         }
     }
 },`
@@ -288,16 +297,16 @@ const generate_mainTable = ((item:any)=> {
     case "bit":
       result = `
 {
-    title: '${COLUMN_COMMENT}',
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
     filters: [{data: {vals: [], sVal: ''}}],
     filterRender: {name: 'FilterContent'},
     slots: {
-        default: ({row}) => {
+        default: ({row,column}) => {
             return [
-                <Checkbox value={row.${COLUMN_NAME}} disabled/>
+                <Checkbox value={row[column.field]} disabled/>
             ]
         }
     }
@@ -306,7 +315,7 @@ const generate_mainTable = ((item:any)=> {
     default:
       result = `
 {
-    title: '${COLUMN_COMMENT}',
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -319,7 +328,7 @@ const generate_mainTable = ((item:any)=> {
   return result
 })
 
-const generate_formItem = ((item:any)=> {
+const generate_formItem = ((item:any,tableName:string)=> {
   const {COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE} = item
   let result = ``
 
@@ -328,7 +337,7 @@ const generate_formItem = ((item:any)=> {
     case "date":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <DatePicker type="date" :value="row.${COLUMN_NAME}"
                 format="yyyy-MM-dd" transfer on-clear
                 @on-change="row.${COLUMN_NAME} = $event" v-width="'100%' "
@@ -342,7 +351,7 @@ const generate_formItem = ((item:any)=> {
     case "longtext":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Input v-model="row.${COLUMN_NAME}" type="text"
            @on-focus="inputFocus($event)"
            :disabled="flagObj.${COLUMN_NAME}==2"
@@ -355,7 +364,7 @@ const generate_formItem = ((item:any)=> {
     case "tinyint":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Input v-model="row.${COLUMN_NAME}" type="number"
            @on-focus="inputFocus($event)"
            :disabled="flagObj.${COLUMN_NAME}==2"
@@ -366,7 +375,7 @@ const generate_formItem = ((item:any)=> {
     case "bit":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem label="${COLUMN_COMMENT}" label-for="${COLUMN_NAME}" key="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Checkbox class="checkrow" v-model="row.${COLUMN_NAME}" border
                               :disabled="flagObj.${COLUMN_NAME}==2"
                               element-id="${COLUMN_NAME}"></Checkbox>
@@ -435,7 +444,7 @@ const generate_sub_edit = ((item:any)=>{
   return result
 })
 
-const generate_sub_column = ((item:any)=>{
+const generate_sub_column = ((item:any,tableName:string)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
   let result = ``
 
@@ -445,8 +454,8 @@ const generate_sub_column = ((item:any)=>{
       result =
 `
 {
-    title: "${COLUMN_COMMENT}",
-     width: 150,
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
     filters: [{data: {vals: [], sVal: ''}}],
@@ -461,7 +470,7 @@ const generate_sub_column = ((item:any)=>{
       result =
 `
 {
-    title: "${COLUMN_COMMENT}",
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -476,7 +485,7 @@ const generate_sub_column = ((item:any)=>{
       result =
 `
 {
-    title: "${COLUMN_COMMENT}",
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -490,7 +499,7 @@ const generate_sub_column = ((item:any)=>{
     case "bit":
       result = `
 {
-    title: "${COLUMN_COMMENT}",
+    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -505,7 +514,7 @@ const generate_sub_column = ((item:any)=>{
   return result
 })
 
-const generate_sub_modal = ((item:any)=>{
+const generate_sub_modal = ((item:any,tableName:string)=>{
   const {COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE} = item
   let result = ``
 
@@ -514,7 +523,7 @@ const generate_sub_modal = ((item:any)=>{
     case "text":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" readonly></vxe-input>
@@ -526,7 +535,7 @@ const generate_sub_modal = ((item:any)=>{
     case "tinyint":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" type="number" readonly></vxe-input>
@@ -537,7 +546,7 @@ const generate_sub_modal = ((item:any)=>{
     case "date":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                :item-render="{}"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
@@ -548,7 +557,7 @@ const generate_sub_modal = ((item:any)=>{
       break
     case "bit":
       result = `
-<vxe-form-item field="${COLUMN_NAME}" title="${COLUMN_COMMENT}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-checkbox :value="data.${COLUMN_NAME}" onclick="return false"></vxe-checkbox>
@@ -573,6 +582,7 @@ defineExpose({
         <t-divider align="center"><h3>功能选择</h3></t-divider>
         <t-space>
           <t-checkbox @change="isLombok = !isLombok"><strong>启用lombok</strong><HelpCircleIcon /></t-checkbox>
+          <t-checkbox @change="isI18n = !isI18n"><strong>启用国际化</strong></t-checkbox>
           <t-checkbox @change="isSub = !isSub"><strong>是否为子表</strong></t-checkbox>
           <t-checkbox v-if="isSub" @change="subDisabled = !subDisabled"><strong>老版子表disabled</strong></t-checkbox>
         </t-space>

@@ -314,7 +314,7 @@ const rowDrop = (() => {
 
 // 对外暴露属性 | 方法
 defineExpose({
-  gridOptions_select,refresh
+  gridOptions_select,refresh,selectTableName
 })
 </script>
 
