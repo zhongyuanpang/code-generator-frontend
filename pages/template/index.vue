@@ -1,12 +1,17 @@
 <script setup lang="ts">
+// region  《- 引入组件 -》
 import TableColumnSelect from "~/components/TableColumnSelect.vue";
 import AddField from "~/components/hy/AddField.vue";
 import ExcelPaste from "~/components/hy/ExcelPaste.vue";
 import ImageUpload from "~/components/hy/ImageUpload.vue";
+import FrontendCommonlyUsed from "~/components/hy/FrontendCommonlyUsed.vue";
+import Result from "~/components/Result.vue";
+// endregion
+
+import Prism from 'prismjs'
+
 import {ref,onMounted,nextTick} from 'vue'
 import {reactive} from "#imports";
-import Prism from 'prismjs'
-import Result from "~/components/Result.vue";
 import {templateStore} from "~/store/template";
 
 // 页面缓存信息
@@ -28,6 +33,7 @@ const selectTagValue = ref("")
 const addField = ref();
 const excelPaste = ref();
 const imageUpload = ref();
+const frontendCommonlyUsed = ref();
 // endregion
 
 // 悬浮菜单
@@ -65,7 +71,7 @@ const templateList = reactive([
     collapseList:[
       {
         name:"前端",
-        tagList:["EXCEL粘贴","图片上传"]
+        tagList:['前端常用功能','EXCEL粘贴','图片上传','主表弹窗选择']
       },
       {
         name:"后端",
@@ -105,6 +111,9 @@ const generate = (()=>{
         break
       case "图片上传":
         value = imageUpload.value.process()
+        break
+      case "前端常用功能":
+        value = frontendCommonlyUsed.value.process()
         break
     }
     if (value instanceof Promise) return
@@ -178,6 +187,7 @@ const onMouseDown = ((event:any) => {
         <AddField ref="addField" v-if="selectTagValue === '新增字段'"/>
         <ExcelPaste ref="excelPaste" v-if="selectTagValue === 'EXCEL粘贴'"/>
         <ImageUpload ref="imageUpload" v-if="selectTagValue === '图片上传'"/>
+        <FrontendCommonlyUsed ref="frontendCommonlyUsed" v-if="selectTagValue === '前端常用功能'"/>
         <!--endregion  -->
 
         <!--region 结果展示 -->
@@ -209,9 +219,9 @@ const onMouseDown = ((event:any) => {
           <div v-for="(item,index) in templateList" :key="index">
               <div class="divider">{{item.name}}</div>
               <t-collapse expand-icon-placement="right">
-                <t-collapse-panel v-for="(itm,idx) in item.collapseList" :key="idx" :value="itm.name" :header="itm.name">
+                <t-collapse-panel v-for="(itm,idx) in item.collapseList" :key="idx" :value="itm.name" :header="itm.name" >
                   <t-space align="center" v-if="itm.tagList.length">
-                    <t-radio-group :default-value="selectTagValue" @change="onChange">
+                    <t-radio-group v-model="selectTagValue" @change="onChange">
                       <t-radio v-for="(tag,i) in itm.tagList" allow-uncheck :key="i" :value="tag">{{tag}}</t-radio>
                     </t-radio-group>
                   </t-space>
@@ -332,6 +342,36 @@ const onMouseDown = ((event:any) => {
     width: 5px;
     height: 100%;
     background-color: $base-color;
+  }
+}
+
+:deep(.divider){
+  color: $base-color !important;
+  font-size: larger;
+  font-weight: bolder;
+  margin: 20px 0;
+  position: relative;
+  padding-left: 15px;
+
+  &::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: $base-color;
+  }
+}
+
+:deep(.t-radio) {
+  background-color: $base-color;
+  border-radius: 7px;
+  padding: 3px 7px;
+
+  .t-radio__label{
+    color: white !important;
+    font-size: 0.9em;
   }
 }
 </style>

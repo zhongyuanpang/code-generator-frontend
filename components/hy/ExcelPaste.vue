@@ -100,7 +100,9 @@ defineExpose({
 
 <template>
     <div>
-        <t-card title="Excel粘贴" hover-shadow />
+        <t-card title="Excel粘贴" hover-shadow>
+            <h4>说明</h4>
+        </t-card>
     </div>
 </template>
 

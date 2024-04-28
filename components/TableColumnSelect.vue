@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import {onMounted,onBeforeUnmount,reactive, ref,nextTick} from 'vue'
+<script setup>
+import {onMounted,onBeforeUnmount,onUnmounted,reactive, ref,nextTick} from 'vue'
 import Sortable from "sortablejs";
 import {connectStore} from "~/store/connecter";
 import {getTableColumnInfo} from "~/composables/api/template";
@@ -19,14 +19,16 @@ onMounted(()=>{
   selectTableName.value = TABLE_COLUMN_SELECT_STORE.GET_SELECT_TABLE_NAME()
 
   // 行拖拽
-  rowDrop();
+  rowDrop()
 })
 
 /**
  * 页面卸载
  */
 onBeforeUnmount(() => {
-
+  if (sortable.value) {
+    sortable.value.destroy()
+  }
 })
 
 // 表格信息展示配置
@@ -105,10 +107,8 @@ const gridOptions = reactive({
   data: []
 })
 
-// 行拖拽展示提示
-const showHelpTip = ref(false)
 // 行拖拽展示控制
-const rowDrag = ref(false)
+const sortable = ref(false)
 
 // 选中信息展示配置
 const gridOptions_select = reactive({
@@ -126,28 +126,7 @@ const gridOptions_select = reactive({
       fixed: 'left'
     },
     { type: 'seq',width: 50},
-    {
-      width: 60,
-      slots: {
-        default: () => {
-          return [
-            h('span', { class: 'drag-btn' }, [
-              h('i', { class: 'fa fa-arrows' })
-            ])
-          ]
-        },
-        header: () => {
-          return [
-            h('vxe-tooltip', { content: "按住后可以上下拖动排序！", enterable: true }, [
-              h('i', {
-                class: 'vxe-icon-question-circle-fill',
-                onClick: () => { showHelpTip.value = !showHelpTip.value }
-              })
-            ])
-          ]
-        }
-      }
-    },
+    { width: 60, slots: { default: 'dragBtn', header: 'dragTip' } },
     {
       field: 'COLUMN_NAME',
       title: '字段',
@@ -232,7 +211,7 @@ const getTable = (()=>{
  * 根据表名获取字段信息
  * @param value
  */
-const getColumnInfo = (value:string) => {
+const getColumnInfo = (value) => {
   selectTableName.value = value
   TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME(value);
   gridOptions.data = []
@@ -241,7 +220,7 @@ const getColumnInfo = (value:string) => {
   let connectInfo = connection.getConnectInfo();
   connectInfo.table = value
 
-  getTableColumnInfo(connectInfo).then((res:any)=>{
+  getTableColumnInfo(connectInfo).then((res)=>{
     const {code,data} = res
     if (code === 200 && data && data.length){
       gridOptions.data = res.data
@@ -277,7 +256,7 @@ const refresh = (()=>{
  * @param row
  * @param $rowIndex
  */
-const onTableDbClick = ({ row, $rowIndex }: { row: any, $rowIndex: number }) => {
+const onTableDbClick = ({ row, $rowIndex }) => {
   // 校验是否重复选择字段
   const exists = gridOptions_select.data.some(item => item.COLUMN_NAME === row.COLUMN_NAME);
   if (exists) {
@@ -290,26 +269,16 @@ const onTableDbClick = ({ row, $rowIndex }: { row: any, $rowIndex: number }) => 
 
 /** 行拖拽 */
 const rowDrop = (() => {
-  nextTick(() => {
-    // let xGrid = this.$refs.xGrid
-    // rowDrag.value = Sortable.create(xGrid.$el.querySelector('.body--wrapper>.vxe-table--body tbody'), {
-    //   handle: '.drag-btn',
-    //   onEnd: ({ newIndex, oldIndex }) => {
-    //     const currRow = this.tableData.splice(oldIndex, 1)[0]
-    //     this.tableData.splice(newIndex, 0, currRow)
-    //   }
-    // })
-    const xGrid = gridRef.value;
+    const xGrid = gridSelectRef.value;
     if (xGrid) {
-      rowDrag.value = Sortable.create(xGrid.$el.querySelector('.body--wrapper > .vxe-table--body tbody'), {
+      sortable.value = Sortable.create(xGrid.$el.querySelector('.body--wrapper > .vxe-table--body tbody'), {
         handle: '.drag-btn',
-        onEnd: ({ newIndex, oldIndex }: { newIndex: number, oldIndex: number }) => {
+        onEnd: ({ newIndex, oldIndex }) => {
           const currRow = gridOptions_select.data.splice(oldIndex, 1)[0];
           gridOptions_select.data.splice(newIndex, 0, currRow);
         }
       });
     }
-  })
 })
 
 // 对外暴露属性 | 方法
@@ -346,7 +315,18 @@ defineExpose({
                 <vxe-grid ref="gridRef" v-bind="gridOptions" @cell-dblclick="onTableDbClick" round stripe/>
             </t-col>
             <t-col :span="6">
-                <vxe-grid ref="gridSelectRef" v-bind="gridOptions_select" round stripe/>
+              <vxe-grid ref="gridSelectRef" v-bind="gridOptions_select" round stripe>
+                <template #dragBtn>
+                  <span class="drag-btn">
+                    <Move1Icon />
+                  </span>
+                </template>
+                <template #dragTip>
+                  <vxe-tooltip content="按住后可以上下拖动排序！" enterable>
+                    <i class="vxe-icon-question-circle-fill"></i>
+                  </vxe-tooltip>
+                </template>
+              </vxe-grid>
             </t-col>
         </t-row>
 

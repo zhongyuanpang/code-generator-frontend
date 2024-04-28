@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {reactive, ref,onMounted } from 'vue'
 import {MessagePlugin} from 'tdesign-vue-next';
 import {Http} from "@/utils/request";
@@ -8,15 +8,19 @@ const connection = connectStore();
 const headerState = headerStore();
 
 // 选中状态
-const isActive = ref<number>(0);
+const isActive = ref(0);
 // 连接弹窗
-const connectVisible = ref<boolean>(false);
+const connectVisible = ref(false);
+
+// 历史连接
+const historyConnect = ref([]);
+const historyRecordIndex = ref(null);
 
 // 统一label宽度
 const formLabelWidth = '100px'
 
 // 连接表单
-let connectForm = reactive<object>({
+const connectForm = ref({
   key:"",
   url:"",
   port:"",
@@ -27,44 +31,93 @@ let connectForm = reactive<object>({
 })
 
 // 数据库类型列表
-const typeList = reactive<object>([
+const typeList = reactive([
   "MySQL","SQL Server","Postgre SQL"
 ])
 
-// 切换标签样式
-function selActive(index: number){
+/**
+ * 切换标签样式
+ * @type {selActive}
+ */
+const selActive = ((index) => {
   isActive.value = index
   headerState.setActive(index)
-}
+})
 
-// 打开连接面板
-const openConnect = () => {
+/**
+ * 打开连接面板
+ * @type {openConnect}
+ */
+const openConnect = (() => {
   connectVisible.value = true
-  connectForm = connection.getConnectInfo()
+  connectForm.value = connection.getConnectInfo()
+  historyConnect.value = connection.getHistoryConnectInfo()
+  historyRecordIndex.value = connection.getSelectHistoryRecordIndex()
+})
 
-  console.log(connectVisible.value)
-  console.log(connectForm)
-}
-
-// 数据库连接
-const connect = () => {
-  connectVisible.value = false;
+/**
+ * 连接测试
+ * @type {connect}
+ */
+const connect = (() => {
   Http({
     url: '/datasource/connectionTest',
     method:'post',
     body:connectForm
-  }).then((res: any)=>{
+  }).then((res)=>{
     const {code,data} = res
     if (code === 200){
+      connectVisible.value = false;
       MessagePlugin.success('连接成功');
       connection.setConnectInfo(connectForm);
-      return
+    } else {
+      MessagePlugin.error('连接失败！请核对信息');
     }
-    MessagePlugin.error('连接失败！请核对信息');
   })
-}
+})
 
-// 页面打开
+/**
+ * 存储记录
+ * @type {storageRecord}
+ */
+const storageRecord = (() => {
+  connection.setHistoryConnectInfo(connectForm);
+  const index = connection.getHistoryConnectInfo().length
+  historyRecordIndex.value = index
+  connection.setSelectHistoryRecordIndex(index)
+})
+
+/**
+ * 清空历史连接记录
+ * @type {removeRecords}
+ */
+const removeRecords = (() => {
+  connection.removeHistoryConnectInfo();
+})
+
+/**
+ * 删除指定记录
+ * @type {removeHistoryConnect}
+ */
+const removeHistoryConnect = ((index) => {
+  if (index === historyRecordIndex.value) {
+    connection.setSelectHistoryRecordIndex(null);
+  }
+
+  connection.removeHistoryConnectInfoByIndex(index);
+})
+
+/**
+ * 替换历史记录
+ * @type {selectHistoryRecord}
+ */
+const selectHistoryRecord = ((record,index) => {
+  connection.setConnectInfo(record);
+  connection.setSelectHistoryRecordIndex(index);
+  connectForm.value = record
+  historyRecordIndex.value = index
+})
+
 onMounted(() => {
   isActive.value = headerState.getActive();
 })
@@ -82,11 +135,11 @@ onMounted(() => {
             </a>
             <!-- 跳转菜单 -->
             <div class="menu">
-                <NuxtLink to="/" :class="{ active : isActive == 0 }" v-on:click.native="selActive(0)">首页</NuxtLink>
-                <NuxtLink :to="{name:'template'}" :class="{ active : isActive == 1 }" v-on:click.native="selActive(1)">模板</NuxtLink>
-                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive == 2 }" v-on:click.native="selActive(2)">DDL</NuxtLink>
-                <NuxtLink :to="{name:'tool'}" :class="{ active : isActive == 3 }" v-on:click.native="selActive(3)">AI工具</NuxtLink>
-                <NuxtLink :to="{name:'ai'}" :class="{ active : isActive == 4 }" v-on:click.native="selActive(4)">GPT</NuxtLink>
+                <NuxtLink to="/" :class="{ active : isActive === 0 }" v-on:click.native="selActive(0)">首页</NuxtLink>
+                <NuxtLink :to="{name:'template'}" :class="{ active : isActive === 1 }" v-on:click.native="selActive(1)">模板</NuxtLink>
+                <NuxtLink :to="{name:'ddl'}" :class="{ active : isActive === 2 }" v-on:click.native="selActive(2)">DDL</NuxtLink>
+                <NuxtLink :to="{name:'tool'}" :class="{ active : isActive === 3 }" v-on:click.native="selActive(3)">AI工具</NuxtLink>
+                <NuxtLink :to="{name:'ai'}" :class="{ active : isActive === 4 }" v-on:click.native="selActive(4)">GPT</NuxtLink>
             </div>
         </div>
 
@@ -120,43 +173,79 @@ onMounted(() => {
             draggable
             destroyOnClose
             header="配置连接"
-            width="35%"
+            width="60%"
             v-model:visible="connectVisible">
-            <t-form ref="form" :data="connectForm" :colon="true" size="small">
+
+          <t-row>
+            <t-col :span="7">
+              <t-form ref="form" :data="connectForm" :colon="true" size="small">
                 <t-form-item label="IP地址" name="url" :label-width="formLabelWidth">
-                    <t-input v-model="connectForm.url" ></t-input>
+                  <t-input v-model="connectForm.url" ></t-input>
                 </t-form-item>
                 <t-form-item label="端口号" name="port" :label-width="formLabelWidth">
-                    <t-input v-model="connectForm.port" ></t-input>
+                  <t-input v-model="connectForm.port" ></t-input>
                 </t-form-item>
                 <t-form-item label="数据库类型" name="dataType" :label-width="formLabelWidth">
-                    <t-radio-group v-model="connectForm.dataType">
-                        <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
-                    </t-radio-group>
+                  <t-radio-group v-model="connectForm.dataType">
+                    <t-radio v-for="(item,index) in typeList" :key="index" :value="item">{{item}}</t-radio>
+                  </t-radio-group>
                 </t-form-item>
                 <t-form-item label="数据库名称" name="dataBase" :label-width="formLabelWidth">
-                    <t-input v-model="connectForm.dataBase" ></t-input>
+                  <t-input v-model="connectForm.dataBase" ></t-input>
                 </t-form-item>
                 <t-form-item label="用户名" name="username" :label-width="formLabelWidth">
-                    <t-input v-model="connectForm.username" >
-                        <template #prefix-icon>
-                            <UserIcon />
-                        </template>
-                    </t-input>
+                  <t-input v-model="connectForm.username" >
+                    <template #prefix-icon>
+                      <UserIcon />
+                    </template>
+                  </t-input>
                 </t-form-item>
                 <t-form-item label="密码" name="password" :label-width="formLabelWidth">
-                    <t-input type="password" v-model="connectForm.password">
-                        <template #prefix-icon>
-                            <lock-on-icon />
-                        </template>
-                    </t-input>
+                  <t-input type="password" v-model="connectForm.password">
+                    <template #prefix-icon>
+                      <lock-on-icon />
+                    </template>
+                  </t-input>
                 </t-form-item>
-            </t-form>
+              </t-form>
+            </t-col>
+            <t-col :span="5">
+              <div><strong>历史连接</strong></div>
+              <div style="max-height: 300px;overflow-y: scroll;">
+                <t-card v-for="(item,index) in historyConnect" :title="item.dataBase" :key="index"
+                        hover-shadow class="history-card" :style="{ width: '350px',marginBottom:'10px' }"
+                        :class="{'history-card-active' : historyRecordIndex === index }" @click="selectHistoryRecord(JSON.parse(JSON.stringify(item)),index)">
+                  <div>IP：{{item.url}} 端口：{{item.port}}</div>
+                  <template #actions>
+                    <t-button theme="primary" shape="circle" @click="removeHistoryConnect(index)">
+                      <template #icon><Delete1Icon /></template>
+                    </t-button>
+                  </template>
+                </t-card>
+              </div>
+            </t-col>
+          </t-row>
 
-            <template #footer>
-                <t-button class="klsdj-btn" theme="danger" @click="connectVisible = false">取消</t-button>
-                <t-button @click="connect">连接</t-button>
-            </template>
+          <template #footer>
+            <t-row>
+              <t-col :span="7">
+                <t-button class="klsdj-btn" theme="primary" @click="storageRecord">
+                  <template #icon><SaveIcon /></template>
+                  存储
+                </t-button>
+                <t-button @click="connect" theme="success">
+                  <template #icon><MapConnectionIcon /></template>
+                  连接
+                </t-button>
+              </t-col>
+              <t-col :span="5">
+                <t-button theme="primary" @click="removeRecords">
+                  <template #icon><Delete1Icon /></template>
+                  清空历史
+                </t-button>
+              </t-col>
+            </t-row>
+          </template>
 
         </t-dialog>
     </client-only>
@@ -166,6 +255,17 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import "~/assets/styles/header.scss";
 
+.history-card-active {
+  background-color: $base-color;
+  color: white;
+  :deep(.t-card__title) {
+    color: white;
+  }
+}
+
+.history-card {
+  cursor: pointer;
+}
   //
   //.theme-switcher input {
   //  display: none;
