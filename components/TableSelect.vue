@@ -124,7 +124,7 @@ defineExpose({
             header="选择数据源"
             width="60%"
             v-model:visible="selectTableVisible">
-          <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入" @change="search" style="width: 300px;margin-bottom: 10px"/>
+          <t-input v-model="searchTableValue" auto-width clearable placeholder="请输入查询关键字" @change="search" style="width: 300px;margin-bottom: 10px"/>
           <vxe-grid v-bind="gridOptions_source"
                     round
                     stripe

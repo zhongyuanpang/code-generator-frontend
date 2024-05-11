@@ -104,7 +104,8 @@ const gridOptions = reactive({
       filterRender: {name: 'FilterContent'},
     },
   ],
-  data: []
+  data: [],
+  sourceData: []
 })
 
 // 行拖拽展示控制
@@ -215,6 +216,7 @@ const getColumnInfo = (value) => {
   selectTableName.value = value
   TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME(value);
   gridOptions.data = []
+  gridOptions.sourceData = []
   gridOptions_select.data = []
 
   let connectInfo = connection.getConnectInfo();
@@ -223,8 +225,9 @@ const getColumnInfo = (value) => {
   getTableColumnInfo(connectInfo).then((res)=>{
     const {code,data} = res
     if (code === 200 && data && data.length){
-      gridOptions.data = res.data
-      TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA(res.data)
+      gridOptions.data = data
+      gridOptions.sourceData = data
+      TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA(data)
     }
   })
 }
@@ -244,6 +247,7 @@ const selectColumn = () => {
 const refresh = (()=>{
   selectTableName.value = ""
   gridOptions.data = []
+  gridOptions.sourceData = []
   gridOptions_select.data = []
   TABLE_COLUMN_SELECT_STORE.SET_SELECT_TABLE_NAME("");
   TABLE_COLUMN_SELECT_STORE.SET_GRID_OPTIONS_DATA([])
@@ -281,6 +285,33 @@ const rowDrop = (() => {
     }
 })
 
+/**
+ * 搜索过滤表
+ */
+const search = () => {
+  const search = searchValue.value
+  //获取输入的关键字
+  const keyword = `${search}`.trim().toLocaleLowerCase();
+  //判断关键字
+  if (keyword) {
+    const searchProps = [];
+
+    gridOptions.columns.forEach((v) => {
+      if (v.field) searchProps.push(v.field);
+    });
+
+    const temp_tableData = toRaw(gridOptions.sourceData);
+    //过滤出的数据
+    gridOptions.data = temp_tableData.filter((item) => {
+      return searchProps.some(
+          (key) => `${item[key]}`.toLowerCase().indexOf(keyword) > -1
+      );
+    });
+  } else {
+    gridOptions.data = JSON.parse(JSON.stringify(gridOptions.sourceData));
+  }
+}
+
 // 对外暴露属性 | 方法
 defineExpose({
   gridOptions_select,refresh,selectTableName
@@ -301,7 +332,7 @@ defineExpose({
                 </t-col>
                 <t-col :span="5" style="text-align: right">
                   <t-space>
-                    <t-input v-model="searchValue" auto-width clearable placeholder="请输入" style="width: 300px;"/>
+                    <t-input v-model="searchValue" @change="search" auto-width clearable placeholder="请输入查询关键字" style="width: 300px;"/>
                     <t-button @click="selectColumn">确认选择</t-button>
                   </t-space>
                 </t-col>

@@ -281,7 +281,7 @@ const generate_mainTable = ((item:any,tableName:string)=> {
     case "datetime":
     case "date":
       result = `
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -297,7 +297,7 @@ const generate_mainTable = ((item:any,tableName:string)=> {
     case "bit":
       result = `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -315,7 +315,7 @@ const generate_mainTable = ((item:any,tableName:string)=> {
     default:
       result = `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -337,7 +337,7 @@ const generate_formItem = ((item:any,tableName:string)=> {
     case "date":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n.value ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <DatePicker type="date" :value="row.${COLUMN_NAME}"
                 format="yyyy-MM-dd" transfer on-clear
                 @on-change="row.${COLUMN_NAME} = $event" v-width="'100%' "
@@ -351,7 +351,7 @@ const generate_formItem = ((item:any,tableName:string)=> {
     case "longtext":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n.value ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Input v-model="row.${COLUMN_NAME}" type="text"
            @on-focus="inputFocus($event)"
            :disabled="flagObj.${COLUMN_NAME}==2"
@@ -364,7 +364,7 @@ const generate_formItem = ((item:any,tableName:string)=> {
     case "tinyint":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n.value ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Input v-model="row.${COLUMN_NAME}" type="number"
            @on-focus="inputFocus($event)"
            :disabled="flagObj.${COLUMN_NAME}==2"
@@ -375,7 +375,7 @@ const generate_formItem = ((item:any,tableName:string)=> {
     case "bit":
       result = `
 <Col :xl="8" :lg="8" :md="12" :sm="24" :xs="24" v-if="flagObj.${COLUMN_NAME}!=1">
-  <FormItem key="${COLUMN_NAME}" ${isI18n ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
+  <FormItem key="${COLUMN_NAME}" ${isI18n.value ? `:label="$t('${tableName}.${COLUMN_NAME}')"` : `label="${COLUMN_COMMENT}"`} label-for="${COLUMN_NAME}" prop="${COLUMN_NAME}">
     <Checkbox class="checkrow" v-model="row.${COLUMN_NAME}" border
                               :disabled="flagObj.${COLUMN_NAME}==2"
                               element-id="${COLUMN_NAME}"></Checkbox>
@@ -454,7 +454,7 @@ const generate_sub_column = ((item:any,tableName:string)=>{
       result =
 `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -470,7 +470,7 @@ const generate_sub_column = ((item:any,tableName:string)=>{
       result =
 `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -485,7 +485,7 @@ const generate_sub_column = ((item:any,tableName:string)=>{
       result =
 `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -499,7 +499,7 @@ const generate_sub_column = ((item:any,tableName:string)=>{
     case "bit":
       result = `
 {
-    title: ${isI18n ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
+    title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
     sortable: true,
@@ -523,7 +523,7 @@ const generate_sub_modal = ((item:any,tableName:string)=>{
     case "text":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n.value ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" readonly></vxe-input>
@@ -535,7 +535,7 @@ const generate_sub_modal = ((item:any,tableName:string)=>{
     case "tinyint":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n.value ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-input :value="data.${COLUMN_NAME}" type="number" readonly></vxe-input>
@@ -546,7 +546,7 @@ const generate_sub_modal = ((item:any,tableName:string)=>{
     case "date":
       result =
 `
-<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n.value ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                :item-render="{}"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
@@ -557,7 +557,7 @@ const generate_sub_modal = ((item:any,tableName:string)=>{
       break
     case "bit":
       result = `
-<vxe-form-item field="${COLUMN_NAME}" title="${isI18n ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
+<vxe-form-item field="${COLUMN_NAME}" title="${isI18n.value ? `$t('${tableName}.${COLUMN_NAME}')` : `${COLUMN_COMMENT}`}" :span="8"
                v-if="flagObjdata1.${COLUMN_NAME}!=1 && detailObj.${COLUMN_NAME}!=''">
   <template #default="{ data }">
     <vxe-checkbox :value="data.${COLUMN_NAME}" onclick="return false"></vxe-checkbox>
