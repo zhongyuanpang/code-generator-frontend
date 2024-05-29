@@ -44,20 +44,35 @@ TablePasteOK() {
 },
 //表格粘贴数据成功
 handleSuccess(tableData) {
-    const tableColumnsMap = new Map(this.gridOptions.columns.map(col => [col.title, col.field]));
+    const copyColumns = []; // 复制数据的表头
+    const copyData = [];  // 复制表格的数据
+    const tableColumns = this.gridOptions.columns;
 
-    this.copyData = tableData.data.map(row => {
-        const copyRow = {};
-        for (const key in row) {
-            if (Object.prototype.hasOwnProperty.call(row, key)) {
-                const field = tableColumnsMap.get(key);
-                if (field) {
-                    copyRow[field] = row[key];
-                }
+    tableData.columns.forEach(item => {
+        if (item.title !== undefined) {
+            const matchedColumn = tableColumns.find(column => {
+                return column.title !== undefined && item.title.replace(/\\s/g, '') === column.title.replace(/\\s/g, '');
+            });
+            if (matchedColumn) {
+                item.field = matchedColumn.field;
+                copyColumns.push(item);
             }
         }
-        return copyRow;
     });
+
+    tableData.data.forEach(row => {
+        const rowData = {};
+        for (const [key, value] of Object.entries(row)) {
+            const matchedColumn = tableData.columns.find(column => column.key === key);
+            if (matchedColumn) {
+                rowData[matchedColumn.field] = value;
+            }
+        }
+        copyData.push(rowData);
+    });
+
+    this.copyColumns = copyColumns;
+    this.copyData = copyData;
 },
 handleError(tableData, errorIndex) {
     this.$Message.error('表格数据有误❌');

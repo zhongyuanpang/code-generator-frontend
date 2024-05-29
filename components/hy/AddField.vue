@@ -281,6 +281,7 @@ const generate_mainTable = ((item:any,tableName:string)=> {
     case "datetime":
     case "date":
       result = `
+{
     title: ${isI18n.value ? `this.$t('${tableName}.${COLUMN_NAME}')` : `'${COLUMN_COMMENT}'`},
     width: 150,
     field: '${COLUMN_NAME}',
@@ -407,9 +408,6 @@ const generate_sub_edit = ((item:any)=>{
     case "tinyint":
       result =
 `
-<template #${COLUMN_NAME}_default="{ row }">
-  <span>{{ row.${COLUMN_NAME} }} </span>
-</template>
 <template #${COLUMN_NAME}_edit="{ row,column }">
   <vxe-input v-model.number="row.${COLUMN_NAME}" type="number"  ${subDisabled.value ? `:disabled="main.archived=='1' || (main.processstatus!=1 && main.processstatus!=0) ||
                                  flagObjdata1.${COLUMN_NAME} == 2 || perUpdate == 0"` : `:disabled="Boolean(setDisabled(row,column))"` }
@@ -477,7 +475,7 @@ const generate_sub_column = ((item:any,tableName:string)=>{
     filters: [{data: {vals: [], sVal: ''}}],
     filterRender: {name: 'FilterContent'},
     editRender: {autofocus: '.vxe-input--inner', defaultValue: 0},
-    slots: {default: '${COLUMN_NAME}_default', edit: '${COLUMN_NAME}_edit'},
+    slots: {edit: '${COLUMN_NAME}_edit'},
 },`;
       break;
     case "datetime":
