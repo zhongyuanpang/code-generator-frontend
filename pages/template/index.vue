@@ -5,11 +5,11 @@ import AddField from "~/components/hy/AddField.vue";
 import ExcelPaste from "~/components/hy/ExcelPaste.vue";
 import ImageUpload from "~/components/hy/ImageUpload.vue";
 import FrontendCommonlyUsed from "~/components/hy/FrontendCommonlyUsed.vue";
+import FrontEndCommonTool from "~/components/tool/FrontEndCommonTool.vue";
 import Result from "~/components/Result.vue";
 // endregion
 
 import Prism from 'prismjs'
-
 import {ref,onMounted,nextTick} from 'vue'
 import {reactive} from "#imports";
 import {templateStore} from "~/store/template";
@@ -34,6 +34,7 @@ const addField = ref();
 const excelPaste = ref();
 const imageUpload = ref();
 const frontendCommonlyUsed = ref();
+const frontEndCommonTool = ref();
 // endregion
 
 // 悬浮菜单
@@ -82,8 +83,18 @@ const templateList = reactive([
         tagList:['新增字段']
       },
     ],
-
   },
+  {
+    name:"工具",
+    icon:"",
+    url:"",
+    collapseList:[
+      {
+        name:"前端",
+        tagList:['前端通用工具']
+      },
+    ]
+  }
 ])
 
 onMounted(()=>{
@@ -114,6 +125,9 @@ const generate = (()=>{
         break
       case "前端常用功能":
         value = frontendCommonlyUsed.value.process()
+        break
+      case "前端通用工具":
+        value = frontEndCommonTool.value.process()
         break
     }
     if (value instanceof Promise) return
@@ -188,15 +202,16 @@ const onMouseDown = ((event:any) => {
         <ExcelPaste ref="excelPaste" v-if="selectTagValue === 'EXCEL粘贴'"/>
         <ImageUpload ref="imageUpload" v-if="selectTagValue === '图片上传'"/>
         <FrontendCommonlyUsed ref="frontendCommonlyUsed" v-if="selectTagValue === '前端常用功能'"/>
+        <FrontEndCommonTool ref="frontEndCommonTool" v-if="selectTagValue === '前端通用工具'"/>
         <!--endregion  -->
 
         <!--region 结果展示 -->
         <t-divider align="left" v-if="result"><strong>结果展示</strong></t-divider>
         <div>
           <t-row :gutter="16">
-            <t-col :span="3">
+            <t-col :span="3" v-if="resultVisible">
               <t-affix ref="affix" :offset-top="100" :offset-bottom="-250">
-                <Result v-if="resultVisible"/>
+                <Result/>
               </t-affix>
             </t-col>
             <t-col :span="9">

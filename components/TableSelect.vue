@@ -98,7 +98,8 @@ const search = () => {
  * 单选框选中事件
  */
 const selectTable = (({ newValue } : any) => {
-  getColumnInfoEmit('getColumnInfo',newValue.TABLE_NAME)
+  console.log(newValue)
+  getColumnInfoEmit('getColumnInfo',newValue.TABLE_NAME,newValue.TABLE_COMMENT)
   selectTableVisible.value = false
 })
 
@@ -106,7 +107,7 @@ const selectTable = (({ newValue } : any) => {
  * 表格双击事件
  */
 const onTableDbClick = (({row} : any)=>{
-  getColumnInfoEmit('getColumnInfo',row.TABLE_NAME)
+  getColumnInfoEmit('getColumnInfo',row.TABLE_NAME,row.TABLE_COMMENT)
   selectTableVisible.value = false
 })
 
